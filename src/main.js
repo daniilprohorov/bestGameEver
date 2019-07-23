@@ -25,7 +25,7 @@
 
     function preload ()
     {
-        this.load.image("tiles", "../res/tileset2.png");
+        this.load.image("tiles", "../res/tileset.png");
         this.load.tilemapTiledJSON("map", "../res/map.json");
         this.load.spritesheet('cat',
             '../res/cat.png',
@@ -42,8 +42,11 @@
         const sky    = map.createStaticLayer("sky", tileset, 0, 0);
         const ground = map.createStaticLayer("ground", tileset, 0, 0);
         const box = map.createStaticLayer("box", tileset, 0, 0);
+        const house = map.createStaticLayer("house", tileset, 0, 0);
+        const tree = map.createStaticLayer("tree", tileset, 0, 0);
 		ground.setCollisionByProperty({ collides: true }); 
 		box.setCollisionByProperty({ collides: true }); 
+		tree.setCollisionByProperty({ collides: true }); 
 
         cat = this.physics.add.sprite(2900, 1000, 'cat');
         // cat.setBounce(0.2);
@@ -52,6 +55,7 @@
         this.physics.world.TILE_BIAS = 40;
         this.physics.add.collider(cat, ground);
         this.physics.add.collider(cat, box);
+        this.physics.add.collider(cat, tree);
         
         this.anims.create({
             key: 'left',
