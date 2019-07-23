@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.4" name="tileset2" tilewidth="200" tileheight="200" tilecount="132" columns="11">
- <image source="../res/tileset2.png" width="2200" height="2400"/>
+<tileset version="1.2" tiledversion="1.2.4" name="tileset" tilewidth="200" tileheight="200" tilecount="132" columns="11">
+ <image source="../res/tileset.png" width="2200" height="2400"/>
  <tile id="0">
   <properties>
    <property name="collides" type="bool" value="false"/>
