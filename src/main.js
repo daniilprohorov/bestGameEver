@@ -41,8 +41,9 @@
 
         const sky    = map.createStaticLayer("sky", tileset, 0, 0);
         const ground = map.createStaticLayer("ground", tileset, 0, 0);
-        const box = map.createStaticLayer("box", tileset, 0, 0);
+        const background = map.createStaticLayer("background", tileset, 0, 0);
         const house = map.createStaticLayer("house", tileset, 0, 0);
+        const box = map.createStaticLayer("box", tileset, 0, 0);
         const tree = map.createStaticLayer("tree", tileset, 0, 0);
 		ground.setCollisionByProperty({ collides: true }); 
 		box.setCollisionByProperty({ collides: true }); 
