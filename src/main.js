@@ -1,3 +1,5 @@
+
+
     var config = {
         type: Phaser.AUTO,
         width: 4000,
@@ -19,6 +21,15 @@
             mode: Phaser.Scale.FIT,
             autoCenter: Phaser.Scale.CENTER_BOTH
         },
+        plugins: {
+            scene: [
+                {
+                    plugin: PhaserMatterCollisionPlugin, // The plugin class
+                    key: "matterCollision", // Where to store in Scene.Systems, e.g. scene.sys.matterCollision
+                    mapping: "matterCollision" // Where to store in the Scene, e.g. scene.matterCollision
+                }
+            ]
+        }
     };
 
     var game = new Phaser.Game(config);
@@ -31,16 +42,18 @@
             '../res/cat.png',
             { frameWidth: 200, frameHeight: 200 }
         );
+
     } 
     function create ()
     {
+        
         const map = this.make.tilemap({ key: "map" }) 
 
         const tileset = map.addTilesetImage("tileset", "tiles");
 
 
         const sky    = map.createStaticLayer("sky", tileset, 0, 0);
-        const ground = map.createStaticLayer("ground", tileset, 0, 0);
+        const ground = map.createDynamicLayer("ground", tileset, 0, 0);
         const background = map.createStaticLayer("background", tileset, 0, 0);
         const house = map.createStaticLayer("house", tileset, 0, 0);
         const pillar = map.createStaticLayer("pillar", tileset, 0, 0);
@@ -57,13 +70,8 @@
 
         this.matter.world.createDebugGraphic();
 
-        cat = this.matter.add.sprite(2900, 1000, 'cat');
+        cat = new Cat(this, 2900, 400, 'cat');
 
-        // this.physics.world.TILE_BIAS = 40;
-        // this.physics.add.collider(cat, ground);
-        // this.physics.add.collider(cat, box);
-        // this.physics.add.collider(cat, tree);
-        //
         this.anims.create({
             key: 'left',
             frames: [ { key: 'cat', frame: 0 } ], //this.anims.generateFrameNumbers('cat', { start: 0, end: 3 }),
@@ -89,54 +97,19 @@
             frameRate: 10,
             //repeat: -1
         });
-        //
-        //
         const camera = this.cameras.main;
-        camera.startFollow(cat, false, 0.05, 0.5, -160, 250);
+        camera.startFollow(cat.sprite, false, 0.05, 0.5, -160, 250);
         camera.setDeadzone(400, 800);
-        camera.centerOn(2000, 3000);
+        // camera.centerOn(2000, 400);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        camera.roundPixels= true;
         //
         cursors = this.input.keyboard.createCursorKeys();
+
+
+
 
     }
     function update ()
     {
-        // for going left and right
-        if (cursors.left.isDown) {
-            cat.setVelocityX(-5);
-            cat.anims.play('left', true);
-        }
-        else if (cursors.right.isDown) {
-            cat.setVelocityX(5);
-            cat.anims.play('right', true);
-        }
-        else {
-            cat.setVelocityX(0);
-            cat.anims.play('def', true);
-        }
-
-        // for jumping
-        // if (cursors.up.isDown && cat.body.onFloor()){
-        //     cat.setVelocityY(-10);
-        //     // cat.anims.play('turn', true);
-        // }
-        if (cursors.up.isDown){
-            cat.setVelocityY(-10);
-            cat.anims.play('turn', true);
-        }
-        // for jumping from walls
-        // else if(cat.body.onWall() && cursors.up.isDown) {
-        //     if(cursors.left.isDown) {
-        //         cat.setVelocity(-15, -7);
-        //     }
-        //     else if (cursors.right.isDown) {
-        //         cat.setVelocity(15, -7);
-        //     }
-        //
-        // }
-
-        
         
     }
