@@ -100,10 +100,14 @@
         const camera = this.cameras.main;
         camera.startFollow(cat.sprite, false, 0.05, 0.5, -160, 250);
         camera.setDeadzone(400, 800);
-        // camera.centerOn(2000, 400);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        //
-        cursors = this.input.keyboard.createCursorKeys();
+        // cursors = this.input.keyboard.createCursorKeys();
+        this.matter.world.drawDebug = true;
+        // const debugKey = this.input.keyboard.addKey('g');  // Get key object
+        // debugKey.on('down', function(event) {
+            // this.matter.world.drawDebug = !this.matter.world.drawDebug;
+        // });
+
 
 
 
@@ -111,5 +115,4 @@
     }
     function update ()
     {
-        
     }

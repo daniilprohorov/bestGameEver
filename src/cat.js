@@ -1,9 +1,11 @@
-const jumpVelocityConst      = -20;
-const jumpVelocityWallsConst = -18;
+const jumpVelocityConst      = -17;
+const jumpVelocityWallsConst = -12;
 const catSensorBottowWidth   = 10;
-const catSensorSide          = 20;
-const xMaxVelocity           = 7;
-const xForce                 = 0.1;
+const catSensorSide          = 12;
+const xMaxVelocity           = 9;
+const xForce                 = 0.07;
+const jumpToWallYConst       = 5;
+
 
 
 class Cat {
@@ -38,15 +40,15 @@ class Cat {
     const { width: w, height: h } = this.sprite;
     const mainBody = Bodies.rectangle(0, 0, w, h, { chamfer: { radius: 20 } });
     this.sensors = {
-      bottom: Bodies.rectangle(0, h*0.5, w*0.85, catSensorBottowWidth, { isSensor: true }),
+      bottom: Bodies.rectangle(0, h*0.5, w*0.8, catSensorBottowWidth, { isSensor: true }),
       left: Bodies.rectangle(-w * 0.5, 0, catSensorSide, h*0.7 , { isSensor: true }),
       right: Bodies.rectangle(w * 0.5, 0, catSensorSide, h*0.7, { isSensor: true })
     };
     const compoundBody = Body.create({
       parts: [mainBody, this.sensors.bottom, this.sensors.left, this.sensors.right],
-      frictionStatic: 0,
-      frictionAir: 0.02,
-      friction: 0.01
+      frictionStatic: 0.1,
+      frictionAir: 0.01,
+      friction: 0.03 
     });
     this.sprite
       .setExistingBody(compoundBody)
@@ -58,9 +60,9 @@ class Cat {
 
     // Before matter's update, reset our record of which surfaces the player is touching.
     scene.matter.world.on("beforeupdate", this.resetTouching, this);
-	
-	this.canJump = true;
-    this.jumpCooldownTimer = null;
+    
+    // flag to be able to go up to wall
+    this.jumpToWall = true;
 
 
     scene.matterCollision.addOnCollideStart({
@@ -115,27 +117,29 @@ class Cat {
 
   update() {
     if (this.destroyed) return;
-
-    const sprite = this.sprite;
-    const velocity = sprite.body.velocity;
+    // сonst vals section
+    const sprite         = this.sprite;
+    const velocity       = sprite.body.velocity;
+    const speed          = sprite.body.speed;
     const isRightKeyDown = this.rightInput.isDown();
-    const isLeftKeyDown = this.leftInput.isDown();
-    const isJumpKeyDown = this.jumpInput.isDown();
-    const isOnGround = this.isTouching.ground;
-    const isOnLeft = this.isTouching.left;
-    const isOnRight = this.isTouching.right;
+    const isLeftKeyDown  = this.leftInput.isDown();
+    const isJumpKeyDown  = this.jumpInput.isDown();
+    const isOnGround     = this.isTouching.ground;
+    const isOnLeft       = this.isTouching.left;
+    const isOnRight      = this.isTouching.right;
+
     const isInAir = !isOnGround;
 
     // --- Move the player horizontally ---
     if (isLeftKeyDown) {
-        if(isJumpKeyDown && isOnRight){
-            sprite.setVelocityY(jumpVelocityWallsConst);
-        }
+        // if(isJumpKeyDown && isOnRight){
+            // sprite.setVelocityY(jumpVelocityWallsConst);
+        // }
         sprite.applyForce({ x: -xForce, y: 0 });
     } else if (isRightKeyDown) {
-        if(isJumpKeyDown && isOnLeft){
-            sprite.setVelocityY(jumpVelocityWallsConst);
-        }
+        // if(isJumpKeyDown && isOnLeft){
+            // sprite.setVelocityY(jumpVelocityWallsConst);
+        // }
         sprite.applyForce({ x: xForce, y: 0 });
     }
 
@@ -150,19 +154,17 @@ class Cat {
 
     // --- Move the player vertically ---
 
-	if (isJumpKeyDown && this.canJump && isOnGround) {
+	if (isJumpKeyDown && isOnGround) {
 	    sprite.setVelocityY(jumpVelocityConst);
-		this.canJump = false;
-		this.jumpCooldownTimer = this.scene.time.addEvent({
-		    delay: 250,
-			callback: () => (this.canJump = true)
-		});
 	}
-    // if (isJumpKeyDown && isOnGround) {
-      // sprite.setVelocityY(jumpVelocityConst);
-    // }
+    if(this.jumpToWall && velocity.y <= jumpToWallYConst && speed >= xMaxVelocity && (isOnLeft || isOnRight) ){
+        this.jumpToWall = false;
+        sprite.setVelocityY(jumpVelocityConst*0.9);
+    }
+    if(isOnGround && !this.jumpToWall){
+       this.jumpToWall = true;
+    }
 
-    // Update the animation/texture based on the state of the player's state
   }
 
   destroy() {}
