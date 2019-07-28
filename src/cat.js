@@ -15,8 +15,14 @@ class Cat {
     const anims = scene.anims;
     anims.create({
         key: 'left',
+        frames: anims.generateFrameNumbers(tag, { start: 9, end: 17}),
+        frameRate: 18,
+        repeat: -1
+    });
+    anims.create({
+        key: 'right',
         frames: anims.generateFrameNumbers(tag, { start: 0, end: 8 }),
-        frameRate: 9,
+        frameRate: 18,
         repeat: -1
     });
     // Create the physics-based sprite that we will move around and animate
@@ -25,8 +31,7 @@ class Cat {
     // The player's body is going to be a compound body that looks something like this:
     //
     //                  A = main body
-    //
-    //                   +---------+ |         |
+    // +---------+ |         |
     //                 +-+         +-+
     //       B = left  | |         | |  C = right
     //    wall sensor  |B|    A    |C|  wall sensor
@@ -142,13 +147,19 @@ class Cat {
             // sprite.setVelocityY(jumpVelocityWallsConst);
         // }
         sprite.applyForce({ x: -xForce, y: 0 });
+        // sprite.setTexture("catRunLeft", 0);
         sprite.anims.play("left", true);
     } else if (isRightKeyDown) {
         // if(isJumpKeyDown && isOnRight){
         // if(isJumpKeyDown && isOnLeft){
             // sprite.setVelocityY(jumpVelocityWallsConst);
         // }
+
+
         sprite.applyForce({ x: xForce, y: 0 });
+
+        // sprite.setTexture("catRunRight", 0);
+        sprite.anims.play("right", true);
     }
 
     // Limit horizontal speed, without this the player's velocity would just keep increasing to

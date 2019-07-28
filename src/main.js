@@ -39,7 +39,7 @@
         this.load.image("tiles", "../res/tileset.png");
         this.load.tilemapTiledJSON("map", "../res/map.json");
         this.load.spritesheet('cat',
-            '../res/runcat.png',
+            '../res/cat.png',
             { frameWidth: 400, frameHeight: 200 }
         );
 
