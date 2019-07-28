@@ -39,8 +39,8 @@
         this.load.image("tiles", "../res/tileset.png");
         this.load.tilemapTiledJSON("map", "../res/map.json");
         this.load.spritesheet('cat',
-            '../res/cat.png',
-            { frameWidth: 200, frameHeight: 200 }
+            '../res/runcat.png',
+            { frameWidth: 400, frameHeight: 200 }
         );
 
     } 
@@ -72,31 +72,25 @@
 
         cat = new Cat(this, 2900, 400, 'cat');
 
-        this.anims.create({
-            key: 'left',
-            frames: [ { key: 'cat', frame: 0 } ], //this.anims.generateFrameNumbers('cat', { start: 0, end: 3 }),
-            frameRate: 10,
-            //repeat: -1
-        });
 
-        this.anims.create({
-            key: 'def',
-            frames: [ { key: 'cat', frame: 1 } ], //this.anims.generateFrameNumbers('cat', { start: 0, end: 3 }),
-            frameRate: 10,
-            //repeat: -1
-        });
-        this.anims.create({
-            key: 'turn',
-            frames: [ { key: 'cat', frame: 3 } ],
-            frameRate: 10
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: [ { key: 'cat', frame: 2 } ],//this.anims.generateFrameNumbers('cat', { start: 5, end: 8 }),
-            frameRate: 10,
-            //repeat: -1
-        });
+        // this.anims.create({
+        //     key: 'def',
+        //     frames: [ { key: 'cat', frame: 1 } ], //this.anims.generateFrameNumbers('cat', { start: 0, end: 3 }),
+        //     frameRate: 10,
+        //     //repeat: -1
+        // });
+        // this.anims.create({
+        //     key: 'turn',
+        //     frames: [ { key: 'cat', frame: 3 } ],
+        //     frameRate: 10
+        // });
+        //
+        // this.anims.create({
+        //     key: 'right',
+        //     frames: [ { key: 'cat', frame: 2 } ],//this.anims.generateFrameNumbers('cat', { start: 5, end: 8 }),
+        //     frameRate: 10,
+        //     //repeat: -1
+        // });
         const camera = this.cameras.main;
         camera.startFollow(cat.sprite, false, 0.05, 0.5, -160, 250);
         camera.setDeadzone(400, 800);
