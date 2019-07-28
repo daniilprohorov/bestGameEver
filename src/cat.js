@@ -11,7 +11,14 @@ const jumpToWallYConst       = 5;
 class Cat {
   constructor(scene, x, y, tag) {
     this.scene = scene;
-
+    
+    const anims = scene.anims;
+    anims.create({
+        key: 'left',
+        frames: anims.generateFrameNumbers(tag, { start: 0, end: 8 }),
+        frameRate: 9,
+        repeat: -1
+    });
     // Create the physics-based sprite that we will move around and animate
     this.sprite = scene.matter.add.sprite(0, 0, tag, 0);
 
@@ -19,8 +26,7 @@ class Cat {
     //
     //                  A = main body
     //
-    //                   +---------+
-    //                   |         |
+    //                   +---------+ |         |
     //                 +-+         +-+
     //       B = left  | |         | |  C = right
     //    wall sensor  |B|    A    |C|  wall sensor
@@ -136,7 +142,9 @@ class Cat {
             // sprite.setVelocityY(jumpVelocityWallsConst);
         // }
         sprite.applyForce({ x: -xForce, y: 0 });
+        sprite.anims.play("left", true);
     } else if (isRightKeyDown) {
+        // if(isJumpKeyDown && isOnRight){
         // if(isJumpKeyDown && isOnLeft){
             // sprite.setVelocityY(jumpVelocityWallsConst);
         // }
