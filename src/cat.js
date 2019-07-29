@@ -49,17 +49,21 @@ class Cat {
 
     const { Body, Bodies } = Phaser.Physics.Matter.Matter; // Native Matter modules
     const { width: w, height: h } = this.sprite;
-    const mainBody = Bodies.rectangle(0, 0, w, h, { chamfer: { radius: 20 } });
+    // const mainBody = Bodies.rectangle(0, 0, w, h, { chamfer: { radius: h*0.4 } });
+    
+    const mainBody1 = Bodies.circle(-w/4, 0, h*0.5);
+    const mainBody2 = Bodies.circle(+w/4, 0, h*0.5);
     this.sensors = {
       bottom: Bodies.rectangle(0, h*0.5, w*0.8, catSensorBottowWidth, { isSensor: true }),
       left: Bodies.rectangle(-w * 0.5, 0, catSensorSide, h*0.7 , { isSensor: true }),
       right: Bodies.rectangle(w * 0.5, 0, catSensorSide, h*0.7, { isSensor: true })
     };
     const compoundBody = Body.create({
-      parts: [mainBody, this.sensors.bottom, this.sensors.left, this.sensors.right],
+      parts: [mainBody1, mainBody2, this.sensors.bottom, this.sensors.left, this.sensors.right],
       frictionStatic: 0.1,
       frictionAir: 0.01,
-      friction: 0.03 
+      friction: 0.02,
+      mass: 45
     });
     this.sprite
       .setExistingBody(compoundBody)
@@ -125,7 +129,7 @@ class Cat {
   freeze() {
     this.sprite.setStatic(true);
   }
-
+    
   update() {
     if (this.destroyed) return;
     // сonst vals section
@@ -140,6 +144,12 @@ class Cat {
     const isOnRight      = this.isTouching.right;
 
     const isInAir = !isOnGround;
+
+
+
+    console.log(sprite.anims.currentFrame);
+
+
 
     // --- Move the player horizontally ---
     if (isLeftKeyDown) {
