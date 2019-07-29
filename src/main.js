@@ -91,6 +91,8 @@
         //     frameRate: 10,
         //     //repeat: -1
         // });
+        //
+        // this.matter.world.setBounds(0, 0, 4000, 2000);
         const camera = this.cameras.main;
         camera.startFollow(cat.sprite, false, 0.05, 0.5, -160, 250);
         camera.setDeadzone(400, 800);
