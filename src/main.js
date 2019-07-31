@@ -37,10 +37,12 @@
     function preload ()
     {
         this.load.image("tiles", "../res/tileset.png");
+        this.load.image("dog", "../res/dog.png");
         this.load.tilemapTiledJSON("map", "../res/map.json");
+        this.load.image("catTest", "../res/catTest.png");
         this.load.spritesheet('cat',
             '../res/cat.png',
-            { frameWidth: 400, frameHeight: 200 }
+            { frameWidth: 300, frameHeight: 300 }
         );
 
     } 
@@ -70,8 +72,11 @@
 
         this.matter.world.createDebugGraphic();
 
-        cat = new Cat(this, 2900, 400, 'cat');
+        cat = new Cat(this, 9100, 3700, 'cat');
+        dog = new Dog(this, 8000, 3700, 'dog', cat.sprite);
 
+        // dog = this.matter.add.sprite(8000, 3700, 'dog', 0);
+        // dog.setFixedRotation()
 
         // this.anims.create({
         //     key: 'def',
@@ -98,7 +103,7 @@
         camera.setDeadzone(400, 800);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         // cursors = this.input.keyboard.createCursorKeys();
-        this.matter.world.drawDebug = true;
+        this.matter.world.drawDebug = false;
         // const debugKey = this.input.keyboard.addKey('g');  // Get key object
         // debugKey.on('down', function(event) {
             // this.matter.world.drawDebug = !this.matter.world.drawDebug;
@@ -111,4 +116,23 @@
     }
     function update ()
     {
+
+        // let enemy  = dog;
+        // let player = cat.sprite;
+        // const enemyMaxVelocityX = 9;
+        // const enemyForceX = 0.1;
+        // // dog.applyForce({ x: dogForceX, y: 0 });
+        //
+        //
+        // // to make velocity litter or equal to enemyMaxVelocityX
+        // if (enemy.body.velocity.x > enemyMaxVelocityX) enemy.body.velocity.x = enemyMaxVelocityX;
+        // if (enemy.body.velocity.x < -enemyMaxVelocityX) enemy.body.velocity.x = -enemyMaxVelocityX;
+        //
+        // if (enemy.x > player.x) {
+        //     enemy.applyForce({ x: -enemyForceX, y: 0 });
+        // }
+        // if (enemy.x < player.x) {
+        //     enemy.applyForce({ x: enemyForceX, y: 0 });
+        // }
+
     }
