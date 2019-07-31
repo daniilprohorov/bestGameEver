@@ -131,12 +131,12 @@
          "columns":11,
          "firstgid":1,
          "image":"tileset.png",
-         "imageheight":5600,
+         "imageheight":3000,
          "imagewidth":2200,
          "margin":0,
          "name":"tileset",
          "spacing":0,
-         "tilecount":308,
+         "tilecount":165,
          "tileheight":200,
          "tiles":[
                 {
