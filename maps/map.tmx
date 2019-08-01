@@ -732,6 +732,196 @@
     <property name="collides" type="bool" value="false"/>
    </properties>
   </tile>
+  <tile id="134">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="98" y="201">
+     <polygon points="0,0 104,-27 103,2"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="135">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="-3" y="175">
+     <polygon points="0,0 203,-137 204,26 4,25"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="136">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="-2" y="42">
+     <polygon points="0,0 47,-22 204,-26 202,160 5,158"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="137">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="2" y="18">
+     <polygon points="0,0 104,-2 199,-3 200,184 -2,182"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="138">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="4" x="2" y="15">
+     <polygon points="0,0 197,8 200,185 -1,185"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="139">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="1" y="22">
+     <polygon points="0,0 26,4 53,20 199,111 198,180 -1,177"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="140">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="2" y="132">
+     <polygon points="0,0 107,70 -1,68"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="143">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="89" y="200">
+     <polygon points="0,0 0,-30 24,-43 47,-115 66,-132 111,-144 112,0"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="144">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="1" y="55">
+     <polygon points="0,0 199,-33 199,146 0,146"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="145">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="-1" y="20">
+     <polygon points="0,0 104,-20 201,-20 201,180 1,181"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="146">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="147">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="148">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="149">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="150">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="151">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="103" y="1">
+     <polygon points="0,0 48,35 53,166 76,176 77,200 -102,199 -103,-1"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="154">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="87" y="5">
+     <polygon points="0,0 -1,197 112,196 112,-4"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="155">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="156">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="157">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="158">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="159">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="160">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="161">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="162">
+   <properties>
+    <property name="collides" type="bool" value="true"/>
+   </properties>
+   <objectgroup draworder="index">
+    <object id="1" x="178" y="2">
+     <polygon points="0,0 1,198 -178,198 -178,-3"/>
+    </object>
+   </objectgroup>
+  </tile>
  </tileset>
  <layer id="2" name="sky" width="100" height="20">
   <data encoding="csv">

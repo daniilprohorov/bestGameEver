@@ -39,7 +39,6 @@
         this.load.image("tiles", "../res/tileset.png");
         this.load.image("dog", "../res/dog.png");
         this.load.tilemapTiledJSON("map", "../res/map.json");
-        this.load.image("catTest", "../res/catTest.png");
         this.load.spritesheet('cat',
             '../res/cat.png',
             { frameWidth: 300, frameHeight: 300 }
@@ -61,19 +60,23 @@
         const pillar = map.createStaticLayer("pillar", tileset, 0, 0);
         const box = map.createDynamicLayer("box", tileset, 0, 0);
         const tree = map.createStaticLayer("tree", tileset, 0, 0);
+        const car = map.createStaticLayer("car", tileset, 0, 0);
 
 		ground.setCollisionByProperty({ collides: true }); 
 		box.setCollisionByProperty({ collides: true }); 
 		tree.setCollisionByProperty({ collides: true }); 
+		car.setCollisionByProperty({ collides: true }); 
 
         this.matter.world.convertTilemapLayer(ground);
         this.matter.world.convertTilemapLayer(box);
         this.matter.world.convertTilemapLayer(tree);
+        this.matter.world.convertTilemapLayer(car);
 
         this.matter.world.createDebugGraphic();
 
-        cat = new Cat(this, 9100, 3700, 'cat');
-        dog = new Dog(this, 8000, 3700, 'dog', cat.sprite);
+        cat = new Cat(this, 10000, 3700, 'cat');
+        dog = new Dog(this, 9500, 3700, 'dog', cat.sprite);
+        dog1 = new Dog(this, 9500, 3700, 'dog', cat.sprite);
 
         // dog = this.matter.add.sprite(8000, 3700, 'dog', 0);
         // dog.setFixedRotation()
@@ -103,7 +106,7 @@
         camera.setDeadzone(400, 800);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         // cursors = this.input.keyboard.createCursorKeys();
-        this.matter.world.drawDebug = false;
+        this.matter.world.drawDebug = true;
         // const debugKey = this.input.keyboard.addKey('g');  // Get key object
         // debugKey.on('down', function(event) {
             // this.matter.world.drawDebug = !this.matter.world.drawDebug;

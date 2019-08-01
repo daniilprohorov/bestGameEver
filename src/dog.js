@@ -3,7 +3,6 @@
 
 class Dog {
 
-
     jumpVelocityConst      = -17;
     jumpVelocityWallsConst = -12;
     SensorBottowWidth      = 10;
@@ -12,6 +11,7 @@ class Dog {
     xForce                 = 0.05;
     jumpToWallYConst       = 5;
     player                 = null
+
   constructor(scene, x, y, tag, player) {
     this.scene = scene;
     this.player = player;

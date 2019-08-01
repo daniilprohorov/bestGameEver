@@ -3,7 +3,7 @@
 const    jumpVelocityConst      = -17;
 const    jumpVelocityWallsConst = -12;
 const    catSensorBottowWidth   = 10;
-const    catSensorSide          = 12;
+const    catSensorSide          = 6;
 const    xMaxVelocity           = 10;
 const    xForce                 = 0.1;
 const    jumpToWallYConst       = 5;
@@ -98,8 +98,8 @@ class Cat {
     const mainBody2 = Bodies.circle(+w/5, h*0.25, h*0.25);
     this.sensors = {
       bottom: Bodies.rectangle(0, h*0.5, w*0.8, catSensorBottowWidth, { isSensor: true }),
-      left: Bodies.rectangle(-w * 0.5, h*0.25, catSensorSide, h*0.4 , { isSensor: true }),
-      right: Bodies.rectangle(w * 0.5, h*0.25, catSensorSide, h*0.4, { isSensor: true }),
+      left: Bodies.rectangle(-w * 0.45, h*0.25, catSensorSide, h*0.2 , { isSensor: true }),
+      right: Bodies.rectangle(w * 0.45, h*0.25, catSensorSide, h*0.2, { isSensor: true }),
       kostyl: Bodies.rectangle(0, -h*0.5, 10, 10, { isSensor: true })
     };
 
