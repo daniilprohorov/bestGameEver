@@ -1,14 +1,12 @@
-
-
-const    jumpVelocityConst      = -17;
-const    jumpVelocityWallsConst = -12;
-const    catSensorBottowWidth   = 10;
-const    catSensorSide          = 6;
-const    xMaxVelocity           = 10;
-const    xForce                 = 0.1;
-const    jumpToWallYConst       = 5;
-
-const    jumpAnimFrames         = [...Array(11).keys()].map( x => x*(Math.abs(jumpVelocityConst)/5.5) + jumpVelocityConst ) 
+const    CAT_JUMP_VELOCITY        = -17;
+const    CAT_WALL_JUMP_VELOCITY   = -12;
+const    CAT_SENSOR_BOTTOM_WIDTH  = 50;
+const    CAT_SENSOR_SIDE_WIDTH    = 6;
+const    CAT_X_MAX_VELOCITY       = 10;
+const    CAT_X_FORCE              = 0.1;
+const    CAT_WALL_JUMP_Y_VELOCITY = 5;
+const    CAT_JUMP_ANIM_COUNT      = 20;
+const    CAT_JUMP_ANIM_FRAMES     = [...Array(CAT_JUMP_ANIM_COUNT + 1).keys()].map( x => x*(Math.abs(CAT_JUMP_VELOCITY)/8.5) + CAT_JUMP_VELOCITY );
 
 class Cat {
 
@@ -88,18 +86,18 @@ class Cat {
     // const mainBody1 = Bodies.circle(-w/4.5, h*0.75, h*0.25);
     // const mainBody2 = Bodies.circle(+w/4.5, h*0.75, h*0.25);
     // this.sensors = {
-    //   bottom: Bodies.rectangle(0, h, w*0.8, catSensorBottowWidth, { isSensor: true }),
-    //   left: Bodies.rectangle(-w * 0.5, h*0.75, catSensorSide, h*0.4 , { isSensor: true }),
-    //   right: Bodies.rectangle(w * 0.5, h*0.75, catSensorSide, h*0.4, { isSensor: true })
+    //   bottom: Bodies.rectangle(0, h, w*0.8, CAT_SENSOR_BOTTOM_WIDTH, { isSensor: true }),
+    //   left: Bodies.rectangle(-w * 0.5, h*0.75, CAT_SENSOR_SIDE_WIDTH, h*0.4 , { isSensor: true }),
+    //   rightngle: Bodies.rectangle(w * 0.5, h*0.75, CAT_SENSOR_SIDE_WIDTH, h*0.4, { isSensor: true })
     // };
     
       
     const mainBody1 = Bodies.circle(-w/5, h*0.25, h*0.25);
     const mainBody2 = Bodies.circle(+w/5, h*0.25, h*0.25);
     this.sensors = {
-      bottom: Bodies.rectangle(0, h*0.5, w*0.8, catSensorBottowWidth, { isSensor: true }),
-      left: Bodies.rectangle(-w * 0.45, h*0.25, catSensorSide, h*0.2 , { isSensor: true }),
-      right: Bodies.rectangle(w * 0.45, h*0.25, catSensorSide, h*0.2, { isSensor: true }),
+      bottom: Bodies.rectangle(0, h*0.5, w*0.6, CAT_SENSOR_BOTTOM_WIDTH, { isSensor: true }),
+      left: Bodies.rectangle(-w * 0.45, h*0.25, CAT_SENSOR_SIDE_WIDTH, h*0.2 , { isSensor: true }),
+      right: Bodies.rectangle(w * 0.45, h*0.25, CAT_SENSOR_SIDE_WIDTH, h*0.2, { isSensor: true }),
       kostyl: Bodies.rectangle(0, -h*0.5, 10, 10, { isSensor: true })
     };
 
@@ -143,6 +141,7 @@ class Cat {
     this.jumpInput = new MultiKey(scene, [UP, W, SPACE]);
 
     this.scene.events.on("update", this.update, this);
+    this.sprite.setDataEnabled();
   }
 
   onSensorCollide({ bodyA, bodyB, pair }) {
@@ -191,51 +190,77 @@ class Cat {
     const isInAir = !isOnGround;
 
 
-    console.log(velocity.y);
 
 
 
     // --- Move the player horizontally ---
     if (isLeftKeyDown) {
         // if(isJumpKeyDown && isOnRight){
-            // sprite.setVelocityY(jumpVelocityWallsConst);
+            // sprite.setVelocityY(CAT_WALL_JUMP_VELOCITY);
         // }
-        sprite.applyForce({ x: -xForce, y: 0 });
+        sprite.applyForce({ x: -CAT_X_FORCE, y: 0 });
 
     } else if (isRightKeyDown) {
         // if(isJumpKeyDown && isOnLeft){
-            // sprite.setVelocityY(jumpVelocityWallsConst);
+            // sprite.setVelocityY(CAT_WALL_JUMP_VELOCITY);
         // }
 
-        sprite.applyForce({ x: xForce, y: 0 });
+        sprite.applyForce({ x: CAT_X_FORCE, y: 0 });
     }
 
     // Limit horizontal speed, without this the player's velocity would just keep increasing to
     // absurd speeds. We don't want to touch the vertical velocity though, so that we don't
     // interfere with gravity.
-    if (velocity.x > xMaxVelocity) sprite.setVelocityX(xMaxVelocity);
-    else if(velocity.x < -xMaxVelocity) sprite.setVelocityX(-xMaxVelocity);
-
-    for( let i = 0; i < 9; i += 1){
-        if(velocity.y >= jumpAnimFrames[i] && velocity.y <= jumpAnimFrames[i+1] && velocity.x < 0 && !isOnGround){
+    if (velocity.x > CAT_X_MAX_VELOCITY) sprite.setVelocityX(CAT_X_MAX_VELOCITY);
+    else if(velocity.x < -CAT_X_MAX_VELOCITY) sprite.setVelocityX(-CAT_X_MAX_VELOCITY);
+    const maxAngle = 50;
+    const h = (maxAngle * 2) / CAT_JUMP_ANIM_COUNT ;
+    for( let i = 0; i < CAT_JUMP_ANIM_COUNT; i += 1){
+        if(velocity.y >= CAT_JUMP_ANIM_FRAMES[i] && velocity.y <= CAT_JUMP_ANIM_FRAMES[i+1] && velocity.x < 0 && !isOnGround){
             sprite.anims.stop();
             sprite.setTexture(this.tag, 40 + i);
-        }
-        else if(velocity.y >= jumpAnimFrames[i] && velocity.y <= jumpAnimFrames[i+1] && velocity.x > 0 && !isOnGround){
+            // angle change method
+            sprite.setAngle( maxAngle - i*h );
+
+            // body change method
+            // const { x : x, y : y} = sprite.body.position;
+            // sprite.setExistingBody(this.catChange(sprite, i, false))
+              // .setFixedRotation() // Sets inertia to infinity so the player can't rotate
+              // .setPosition(x,y)
+              // .setVelocityY(velocity.y)
+              // .setVelocityX(velocity.x);
+            //
+            // thirdVariant
+            // sprite.setBody({}, {angle : 90});
+            }
+        else if(velocity.y >= CAT_JUMP_ANIM_FRAMES[i] && velocity.y <= CAT_JUMP_ANIM_FRAMES[i+1] && velocity.x > 0 && !isOnGround){
             sprite.anims.stop();
-            sprite.setTexture(this.tag, 50 + i);
+            sprite.setTexture(this.tag, 60 + i);
+            // angle change method
+            sprite.setAngle(i*h - maxAngle);
+
+            // body change method
+            // const { x : x, y : y} = sprite.body.position;
+            // sprite.setExistingBody(this.catChange(sprite, i, false))
+            //   .setFixedRotation() // Sets inertia to infinity so the player can't rotate
+            //   .setPosition(x,y)
+            //   .setVelocityY(velocity.y)
+            //   .setVelocityX(velocity.x);
         }
     }
-
+    
+    // console.log(CAT_JUMP_ANIM_FRAMES);
+    // console.log(CAT_JUMP_ANIM_FRAMES2);
 
     // --- Move the player vertically ---
 
 	if (isJumpKeyDown && isOnGround) {
-        sprite.setVelocityY(jumpVelocityConst);
+        sprite.setVelocityY(CAT_JUMP_VELOCITY);
 	}
-    if(this.jumpToWall && velocity.y <= jumpToWallYConst && speed >= xMaxVelocity && (isOnLeft || isOnRight) ){
+    if(this.jumpToWall && velocity.y <= CAT_WALL_JUMP_Y_VELOCITY && speed >= CAT_X_MAX_VELOCITY && (isOnLeft || isOnRight) ){
         this.jumpToWall = false;
-        sprite.setVelocityY(jumpVelocityConst*0.9);
+        sprite.setVelocityY(CAT_JUMP_VELOCITY*0.9);
+
     }
     if(isOnGround && !this.jumpToWall){
        this.jumpToWall = true;
@@ -244,7 +269,7 @@ class Cat {
     // amimation
 
     if(velocity.x > 0 && isOnGround) {
-        if(speed > xMaxVelocity*0.8){
+        if(speed > CAT_X_MAX_VELOCITY*0.8){
             sprite.anims.play("rightRun", true);
         }
         else {
@@ -252,7 +277,7 @@ class Cat {
         }
     }
     else if (velocity.x < 0 && isOnGround ){
-        if(speed > xMaxVelocity*0.8){
+        if(speed > CAT_X_MAX_VELOCITY*0.8){
             sprite.anims.play("leftRun", true);
         }
         else {
@@ -260,12 +285,61 @@ class Cat {
         }
     }
 
-    // if(velocity.y > 0){
-    //     sprite.anims.play("jump0", true);
+    // if(isOnGround){
+    //     sprite.setAngle(0);
     // }
+
 
   }
 
+
   destroy() {}
+  catChange(sprite, n, def,  count = CAT_JUMP_ANIM_COUNT ){
+         
+        const { Body, Bodies } = Phaser.Physics.Matter.Matter; // Native Matter modules
+        const { width: w, height: h } = sprite;
+        const { x : x, y : y} = sprite.body.position;
+        if (def){
+            const mainBody1 = Bodies.circle(-w/5, h*0.25, h*0.25);
+            const mainBody2 = Bodies.circle(+w/5, h*0.25, h*0.25);
+            this.sensors = {
+              bottom: Bodies.rectangle(0, h*0.5, w*0.8, CAT_SENSOR_BOTTOM_WIDTH, { isSensor: true }),
+              left: Bodies.rectangle(-w * 0.45, h*0.25, CAT_SENSOR_SIDE_WIDTH, h*0.2 , { isSensor: true }),
+              right: Bodies.rectangle(w * 0.45, h*0.25, CAT_SENSOR_SIDE_WIDTH, h*0.2, { isSensor: true }),
+              kostyl: Bodies.rectangle(0, -h*0.5, 10, 10, { isSensor: true })
+            };
+
+            return Body.create({
+              parts: [mainBody1, mainBody2, this.sensors.bottom, this.sensors.left, this.sensors.right, this.sensors.kostyl],
+              frictionStatic: 0.1,
+              frictionAir: 0.01,
+              friction: 0.02,
+              mass: 45
+            });
+        }
+        else {
+            const half = count / 2
+            const maxHeight = h*0.2;
+            const d =  maxHeight / count;
+            
+            const mainBody1 = Bodies.circle(-w/5, h*0.25 - d * n    , h*0.25 );
+            const mainBody2 = Bodies.circle(+w/5, h*0.25, h*0.25);
+            this.sensors = {
+              bottom: Bodies.rectangle(0, h*0.5, w*0.8, CAT_SENSOR_BOTTOM_WIDTH, { isSensor: true }),
+              left: Bodies.rectangle(-w * 0.45, h*0.25, CAT_SENSOR_SIDE_WIDTH, h*0.2 , { isSensor: true }),
+              right: Bodies.rectangle(w * 0.45, h*0.25, CAT_SENSOR_SIDE_WIDTH, h*0.2, { isSensor: true }),
+              kostyl: Bodies.rectangle(0, -h*0.5, 10, 10, { isSensor: true })
+            };
+
+            return Body.create({
+              parts: [mainBody1, mainBody2, this.sensors.bottom, this.sensors.left, this.sensors.right, this.sensors.kostyl],
+              frictionStatic: 0.1,
+              frictionAir: 0.01,
+              friction: 0.02,
+              mass: 45
+            });
+         }
+
+  }
 }
 
