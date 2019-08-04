@@ -1,16 +1,14 @@
 
-
+const DOG_JUMP_VELOCITY      = -17;
+const DOG_WALL_JUMP_VELOCITY = -12;
+const DOG_SENSOR_BOTTOM_WIDTH      = 10;
+const DOG_SENSOR_SIDE_WIDTH             = 600;
+const DOG_X_MAX_VELOCITY           = 7;
+const DOG_X_FORCE                 = 0.05;
 
 class Dog {
 
-    jumpVelocityConst      = -17;
-    jumpVelocityWallsConst = -12;
-    SensorBottowWidth      = 10;
-    SensorSide             = 600;
-    xMaxVelocity           = 7;
-    xForce                 = 0.05;
-    jumpToWallYConst       = 5;
-    player                 = null
+  player                 = null
 
   constructor(scene, x, y, tag, player) {
     this.scene = scene;
@@ -58,9 +56,9 @@ class Dog {
     // const mainBody1 = Bodies.circle(-w/4, 0, h*0.5);
     // const mainBody2 = Bodies.circle(+w/4, 0, h*0.5);
     this.sensors = {
-      bottom: Bodies.rectangle(0, h*0.5, w*0.8, this.SensorBottowWidth, { isSensor: true }),
-      left: Bodies.rectangle(-w*2, 0, this.SensorSide, h*0.7 , { isSensor: true }),
-      right: Bodies.rectangle(w*2 , 0, this.SensorSide, h*0.7, { isSensor: true })
+      bottom: Bodies.rectangle(0, h*0.5, w*0.8, this.DOG_SENSOR_BOTTOM_WIDTH, { isSensor: true }),
+      left: Bodies.rectangle(-w*2, 0, this.DOG_SENSOR_SIDE_WIDTH, h*0.7 , { isSensor: true }),
+      right: Bodies.rectangle(w*2 , 0, this.DOG_SENSOR_SIDE_WIDTH, h*0.7, { isSensor: true })
     };
     const compoundBody = Body.create({
       parts: [mainBody, this.sensors.bottom, this.sensors.left, this.sensors.right],
@@ -166,18 +164,18 @@ class Dog {
     // Limit horizontal speed, without this the player's velocity would just keep increasing to
     // absurd speeds. We don't want to touch the vertical velocity though, so that we don't
     // interfere with gravity.
-    if (velocity.x > this.xMaxVelocity) sprite.setVelocityX(this.xMaxVelocity);
-    else if(velocity.x < -this.xMaxVelocity) sprite.setVelocityX(-this.xMaxVelocity);
+    if (velocity.x > this.DOG_X_MAX_VELOCITY) sprite.setVelocityX(this.DOG_X_MAX_VELOCITY);
+    else if(velocity.x < -this.DOG_X_MAX_VELOCITY) sprite.setVelocityX(-this.DOG_X_MAX_VELOCITY);
 
 
     if (x > this.player.x) {
-        sprite.applyForce({ x: -this.xForce, y: 0 });
+        sprite.applyForce({ x: -this.DOG_X_FORCE, y: 0 });
     }
     if (x < this.player.x) {
-        sprite.applyForce({ x: this.xForce, y: 0 });
+        sprite.applyForce({ x: this.DOG_X_FORCE, y: 0 });
     }
     if (isOnGround && (isOnLeft || isOnRight) ) {
-        sprite.setVelocityY(jumpVelocityConst);
+        sprite.setVelocityY(DOG_JUMP_VELOCITY);
     }
 
 
