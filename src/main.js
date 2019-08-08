@@ -2,8 +2,8 @@
 
     var config = {
         type: Phaser.AUTO,
-        width: 4000,
-        height: 2000,
+        width: 2000,
+        height: 1000,
         pixelArt: true,
         roundPixels: true, 
         scene: {
@@ -41,7 +41,7 @@
         this.load.tilemapTiledJSON("map", "../res/map.json");
         this.load.spritesheet('cat',
             '../res/cat.png',
-            { frameWidth: 300, frameHeight: 300 }
+            { frameWidth: 150, frameHeight: 150 }
         );
 
     } 
@@ -54,30 +54,25 @@
 
 
         const sky    = map.createStaticLayer("sky", tileset, 0, 0);
-        const ground = map.createDynamicLayer("ground", tileset, 0, 0);
         const background = map.createStaticLayer("background", tileset, 0, 0);
-        const house = map.createStaticLayer("house", tileset, 0, 0);
-        const pillar = map.createStaticLayer("pillar", tileset, 0, 0);
-        const box = map.createDynamicLayer("box", tileset, 0, 0);
-        const tree = map.createStaticLayer("tree", tileset, 0, 0);
-        const car = map.createStaticLayer("car", tileset, 0, 0);
+        const ground = map.createDynamicLayer("ground", tileset, 0, 0);
+        const gameObjects = map.createStaticLayer("gameObjects", tileset, 0, 0);
+        // const pillar = map.createStaticLayer("pillar", tileset, 0, 0);
+        // const box = map.createDynamicLayer("box", tileset, 0, 0);
+        // const tree = map.createStaticLayer("tree", tileset, 0, 0);
+        // const car = map.createStaticLayer("car", tileset, 0, 0);
 
+		gameObjects.setCollisionByProperty({ collides: true }); 
 		ground.setCollisionByProperty({ collides: true }); 
-		box.setCollisionByProperty({ collides: true }); 
-		tree.setCollisionByProperty({ collides: true }); 
-		car.setCollisionByProperty({ collides: true }); 
 
+        this.matter.world.convertTilemapLayer(gameObjects);
         this.matter.world.convertTilemapLayer(ground);
-        this.matter.world.convertTilemapLayer(box);
-        this.matter.world.convertTilemapLayer(tree);
-        this.matter.world.convertTilemapLayer(car);
 
         this.matter.world.createDebugGraphic();
 
-        cat = new Cat(this, 10000, 3700, 'cat');
-        dog = new Dog(this, 9500, 3700, 'dog', cat.sprite);
-        dog1 = new Dog(this, 9500, 3700, 'dog', cat.sprite);
-
+        cat = new Cat(this, 100, 370, 'cat');
+        dog = new Dog(this, 2000, 300, 'dog', cat.sprite);
+        
         // dog = this.matter.add.sprite(8000, 3700, 'dog', 0);
         // dog.setFixedRotation()
 
@@ -103,7 +98,7 @@
         // this.matter.world.setBounds(0, 0, 4000, 2000);
         const camera = this.cameras.main;
         camera.startFollow(cat.sprite, false, 0.05, 0.5, -160, 250);
-        camera.setDeadzone(400, 800);
+        // camera.setDeadzone(400, 800);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         // cursors = this.input.keyboard.createCursorKeys();
         this.matter.world.drawDebug = true;
