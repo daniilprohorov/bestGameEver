@@ -59,11 +59,11 @@
         {
          "columns":30,
          "firstgid":1,
-         "image":"tileset.png",
+         "image":"tileset0.png",
          "imageheight":3000,
          "imagewidth":3000,
          "margin":0,
-         "name":"tileset",
+         "name":"tileset0",
          "spacing":0,
          "tilecount":900,
          "tileheight":100,

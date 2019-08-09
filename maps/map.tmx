@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="500" height="20" tilewidth="100" tileheight="100" infinite="0" nextlayerid="19" nextobjectid="1">
- <tileset firstgid="1" name="tileset" tilewidth="100" tileheight="100" tilecount="900" columns="30">
-  <image source="../res/tileset.png" width="3000" height="3000"/>
+ <tileset firstgid="1" name="tileset0" tilewidth="100" tileheight="100" tilecount="900" columns="30">
+  <image source="../res/tileset0.png" width="3000" height="3000"/>
   <tile id="0">
    <properties>
     <property name="collides" type="bool" value="false"/>
