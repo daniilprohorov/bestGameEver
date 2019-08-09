@@ -90,13 +90,12 @@ class Cat {
     });
 
     // Track the keys
-    const { LEFT, RIGHT, UP, A, D, W, SPACE } = Phaser.Input.Keyboard.KeyCodes;
-    this.leftInput = new MultiKey(scene, [LEFT, A]);
-    this.rightInput = new MultiKey(scene, [RIGHT, D]);
-    this.jumpInput = new MultiKey(scene, [UP, W, SPACE]);
+    const { LEFT, RIGHT, UP} = Phaser.Input.Keyboard.KeyCodes;
+    this.leftInput = new MultiKey(scene, [LEFT]);
+    this.rightInput = new MultiKey(scene, [RIGHT]);
+    this.jumpInput = new MultiKey(scene, [UP]);
 
     this.scene.events.on("update", this.update, this);
-    this.sprite.setDataEnabled();
   }
 
   onSensorCollide({ bodyA, bodyB, pair }) {
