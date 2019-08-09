@@ -808,7 +808,7 @@
  </tile>
  <tile id="125">
   <properties>
-   <property name="collides" type="bool" value="true"/>
+   <property name="collides" type="bool" value="false"/>
   </properties>
   <objectgroup draworder="index">
    <object id="1" x="-2.33333" y="24.6667">
