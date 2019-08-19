@@ -1,0 +1,43 @@
+{
+  "name": "bestgameever",
+  "version": "0.0.1",
+  "description": "Game about cat and dog",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack -w  --mode development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniilprohorov/bestGameEver.git"
+  },
+  "keywords": [
+    "cat",
+    "game",
+    "dog"
+  ],
+  "author": "Daniil Prohorov (Programming)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daniilprohorov/bestGameEver/issues"
+  },
+  "homepage": "https://github.com/daniilprohorov/bestGameEver#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "brain.js": "^1.2.2",
+    "express": "^4.17.1",
+    "jsonfile": "^5.0.0",
+    "matter-js": "^0.14.2",
+    "phaser-matter-collision-plugin": "^0.10.2"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.1",
+    "phaser": "^3.19.0",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6"
+  }
+}
