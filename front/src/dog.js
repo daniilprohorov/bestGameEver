@@ -20,10 +20,12 @@ const DOG_X_FORCE             = 0.05;
 export default class Dog {
 
   
-  constructor(scene, x, y, tag, player) {
+  constructor(scene, x, y, tag, player, learning, autoMove) {
     this.scene = scene;
     this.player = player;
     this.gameOver = false;
+    this.learning = learning;
+    this.autoMove = autoMove;
     
 
     // Create the physics-based sprite that we will move around and animate
@@ -140,6 +142,7 @@ export default class Dog {
     // 4 - экспорт датасета
     // 5 - импорт датасета
     // 6 - рестарт игры
+    // 7 - восстановить прежнее обучение
     this.leftInput   = new MultiKey(scene, [A]);
     this.rightInput  = new MultiKey(scene, [D]);
     this.jumpInput   = new MultiKey(scene, [W]);
@@ -151,13 +154,12 @@ export default class Dog {
     this.restartKey  = new MultiKey(scene, [SIX]);
     this.goBackKey   = new MultiKey(scene, [SEVEN]);
     
-    // флаг и таймер, чтобы не было много ивентов при нажатии кнопки
+    // флаг чтобы не было много ивентов при нажатии кнопки 7
     this.goBackFlag  = true;
-    // this.goBackTimer = null;
 
     const config = {
-        hiddenLayers: [20, 20, 20],
-        activation: 'tanh',  // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
+        hiddenLayers: [40, 40, 40, 40, 40],
+        activation: 'sigmoid',  // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
     };
 
     this.net = new brain.NeuralNetwork(config);
@@ -176,11 +178,14 @@ export default class Dog {
 
     // инициализируем датасет
     this.dataSet = [];
-    // загружаем нейросеть 
-    this.getTrain();
-    // загружаем датасет
-    this.getData();
-    // this.train();
+    
+    // lvl1 or lvl2
+    if(this.autoMove) {
+        // загружаем нейросеть 
+        this.getTrain();
+        // загружаем датасет
+        this.getData();
+    }
 
   }
   onGroundCollide({ bodyA, bodyB, pair }) {
@@ -193,7 +198,9 @@ export default class Dog {
     if (bodyB.isSensor) return; // We only care about collisions with physical objects
     if (this.player.body.parts.some( x => {return x === bodyB})) {
         console.log("GAME OVER");
-        this.train(); 
+        if(this.learning) {
+            this.train(); 
+        }
         this.gameOver = true;
 
     } 
@@ -293,11 +300,6 @@ export default class Dog {
     if (isGoBack && this.goBackFlag) {
         this.goBackFlag = false;
         this.goBack(); 
-        // таймер, чтобы не было много ивентов
-        // this.goBackTimer = this.scene.time.addEvent({
-        //     delay: 5000,
-        //     callback: () => (this.goBackFlag = true)
-        // });
     }
   }
 
@@ -345,11 +347,12 @@ export default class Dog {
       });
   }
   train() {
+      console.log(this.dataSet);
     // обучаем нейросеть
     this.net.train(this.dataSet, {
         log: (error) => console.log(error),
-        iterations: 1000,    // the maximum times to iterate the training data --> number greater than 0
-        errorThresh: 0.02,   // the acceptable error percentage from training data --> number between 0 and 1
+        iterations: 2000,    // the maximum times to iterate the training data --> number greater than 0
+        errorThresh: 0.005,   // the acceptable error percentage from training data --> number between 0 and 1
         learningRate: 0.3,    // scales with delta to effect training rate --> number between 0 and 1
         momentum: 0.1,        // scales with next layer's change value --> number between 0 and 1
         callbackPeriod: 100,   // the number of iterations through the training data between callback calls --> number greater than 0
@@ -359,13 +362,10 @@ export default class Dog {
     this.sendTrain(this.net.toJSON());
     // сохраняем датасет
     this.sendData(this.dataSet);
-    // let json = this.net.toJSON();
-    // this.net.fromJSON(json);
   }
 
   destroy() {
     this.destroyed = true;
-    if (this.goBackTimer) this.goBackTimer.destroy();
   }
 }
 
