@@ -3,7 +3,9 @@ import Cat from "./cat.js";
 import Dog from "./dog.js";
 
 export default class MainScene extends Phaser.Scene {
-
+    constructor() {
+      super("testLvl");
+    }
     preload (){
         this.load.image("tiles0", "res/tileset0.png");
         this.load.image("tiles1", "res/tileset1.png");
@@ -37,11 +39,11 @@ export default class MainScene extends Phaser.Scene {
 
         this.matter.world.createDebugGraphic();
 
-        const cat = new Cat(this, 100, 1800, 'cat');
-        const dog = new Dog(this, 2000, 300, 'dog', cat.sprite);
+        this.cat = new Cat(this, 1500, 1800, 'cat');
+        this.dog = new Dog(this, 100, 1800, 'dog', this.cat.sprite);
         
         const camera = this.cameras.main;
-        camera.startFollow(cat.sprite, false, 0.05, 0.5, -160, 250);
+        camera.startFollow(this.cat.sprite, false, 0.05, 0.5, -160, 250);
         camera.setDeadzone(300, 500);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.matter.world.drawDebug = true;
@@ -49,5 +51,10 @@ export default class MainScene extends Phaser.Scene {
     }
 
     update (){
+        if (this.dog.gameOver === true) {
+            this.cat.destroy();
+            this.dog.destroy();
+            this.scene.start("menu");     
+        }
     }
 }

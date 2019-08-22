@@ -1,15 +1,15 @@
 import Phaser from "phaser";
 import PhaserMatterCollisionPlugin from "phaser-matter-collision-plugin";
-import MainScene from "./main-scene.js";
+import Menu from "./menu.js";
 
-
+// const menu = new Menu();
 const config = {
     type: Phaser.AUTO,
     width: 2000,
     height: 1000,
     pixelArt: true,
     roundPixels: true, 
-    scene: MainScene,
+    scene: Menu,
     physics: {
         default: 'matter',
         matter: {

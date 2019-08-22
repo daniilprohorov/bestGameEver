@@ -23,6 +23,7 @@ export default class Dog {
   constructor(scene, x, y, tag, player) {
     this.scene = scene;
     this.player = player;
+    this.gameOver = false;
     
 
     // Create the physics-based sprite that we will move around and animate
@@ -74,11 +75,8 @@ export default class Dog {
             this.nTouch.push(0);
     }
 
-    this.dataSet = [];
 
 
-    // Before matter's update, reset our record of which surfaces the player is touching.
-    scene.matter.world.on("beforeupdate", this.resetTouching, this);
     
     // flag to be able to go up to wall
     this.jumpToWall = true;
@@ -135,15 +133,27 @@ export default class Dog {
 
 
     // Track the keys
-    const { A, W, D, ONE, TWO, THREE, FOUR, FIVE} = Phaser.Input.Keyboard.KeyCodes;
-    this.leftInput                                = new MultiKey(scene, [A]);
-    this.rightInput                               = new MultiKey(scene, [D]);
-    this.jumpInput                                = new MultiKey(scene, [W]);
-    this.sendKey                                  = new MultiKey(scene, [ONE]);
-    this.trainKey                                 = new MultiKey(scene, [TWO]);
-    this.runKey                                   = new MultiKey(scene, [THREE]);
-    this.sendDataKey                              = new MultiKey(scene, [FOUR]);
-    this.getDataKey                               = new MultiKey(scene, [FIVE]);
+    const { A, W, D, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN} = Phaser.Input.Keyboard.KeyCodes;
+    // 1 - импортировать нейросеть
+    // 2 - обучить нейросеть и записать в файл
+    // 3 - старт/стоп собаки
+    // 4 - экспорт датасета
+    // 5 - импорт датасета
+    // 6 - рестарт игры
+    this.leftInput   = new MultiKey(scene, [A]);
+    this.rightInput  = new MultiKey(scene, [D]);
+    this.jumpInput   = new MultiKey(scene, [W]);
+    this.sendKey     = new MultiKey(scene, [ONE]);
+    this.trainKey    = new MultiKey(scene, [TWO]);
+    this.runKey      = new MultiKey(scene, [THREE]);
+    this.sendDataKey = new MultiKey(scene, [FOUR]);
+    this.getDataKey  = new MultiKey(scene, [FIVE]);
+    this.restartKey  = new MultiKey(scene, [SIX]);
+    this.goBackKey   = new MultiKey(scene, [SEVEN]);
+    
+    // флаг и таймер, чтобы не было много ивентов при нажатии кнопки
+    this.goBackFlag  = true;
+    // this.goBackTimer = null;
 
     const config = {
         hiddenLayers: [20, 20, 20],
@@ -160,6 +170,18 @@ export default class Dog {
 	this.isSend = false;	
 
     this.scene.events.on("update", this.update, this);
+    // this.scene.events.on("update", this.update, this);
+    // Before matter's update, reset our record of which surfaces the player is touching.
+    scene.matter.world.on("beforeupdate", this.resetTouching, this);
+
+    // инициализируем датасет
+    this.dataSet = [];
+    // загружаем нейросеть 
+    this.getTrain();
+    // загружаем датасет
+    this.getData();
+    // this.train();
+
   }
   onGroundCollide({ bodyA, bodyB, pair }) {
     if (bodyB.isSensor) return; // We only care about collisions with physical objects
@@ -170,8 +192,10 @@ export default class Dog {
   onDogCollide({ bodyA, bodyB, pair }) {
     if (bodyB.isSensor) return; // We only care about collisions with physical objects
     if (this.player.body.parts.some( x => {return x === bodyB})) {
-        console.log(bodyB);
         console.log("GAME OVER");
+        this.train(); 
+        this.gameOver = true;
+
     } 
   }
 
@@ -202,6 +226,8 @@ export default class Dog {
     const isTrain        = this.trainKey.isDown();
     const isSendData     = this.sendDataKey.isDown();
     const isGetData      = this.getDataKey.isDown();
+    const isRestart      = this.restartKey.isDown();
+    const isGoBack       = this.goBackKey.isDown();
     this.isRunToggle     = this.runKey.isDown() ? !this.isRunToggle : this.isRunToggle ;
 
     const isOnGround     = this.isOnGround;
@@ -239,22 +265,7 @@ export default class Dog {
         this.getTrain();
 	}
     if (isTrain) {
-        // let withoutDuplicates = Array.from(new Set(this.dataSet.map(JSON.stringify)), JSON.parse)
-        // this.dataSet = withoutDuplicates;
-		this.net.train(this.dataSet, {
-			log: (error) => console.log(error),
-			iterations: 3000,    // the maximum times to iterate the training data --> number greater than 0
-			errorThresh: 0.02,   // the acceptable error percentage from training data --> number between 0 and 1
-			learningRate: 0.3,    // scales with delta to effect training rate --> number between 0 and 1
-			momentum: 0.1,        // scales with next layer's change value --> number between 0 and 1
-			callbackPeriod: 100,   // the number of iterations through the training data between callback calls --> number greater than 0
-			timeout: Infinity     // the max number of milliseconds to train for --> number greater than 0
-		});
-        console.log(this.net.toJSON());
-		this.sendTrain(this.net.toJSON());
-        let json = this.net.toJSON();
-        this.net.fromJSON(json);
-        
+        this.train(); 
     }
     if(this.isRunToggle) {
         let dataTest = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
@@ -276,6 +287,18 @@ export default class Dog {
     if (isGetData) {
         this.getData();
     }
+    if (isRestart) {
+        this.gameOver = true;
+    }
+    if (isGoBack && this.goBackFlag) {
+        this.goBackFlag = false;
+        this.goBack(); 
+        // таймер, чтобы не было много ивентов
+        // this.goBackTimer = this.scene.time.addEvent({
+        //     delay: 5000,
+        //     callback: () => (this.goBackFlag = true)
+        // });
+    }
   }
 
   sendTrain(data) {
@@ -292,7 +315,10 @@ export default class Dog {
     axios.post('/getTrain')
       .then(response => {
           console.log(response);
+        // импортируем нейросеть из полученного JSON
         this.net.fromJSON(response.data);
+        // запускаем игру
+        this.isRunToggle = true;
       });
   }
   sendData(data) {
@@ -310,9 +336,36 @@ export default class Dog {
         this.dataSet = response.data;
       });
   }
+  goBack() {
+    axios.post('/goBack')
+      .then(response => {
+          console.log(response);
+        // перезапускаем игру
+        this.gameOver = true;
+      });
+  }
+  train() {
+    // обучаем нейросеть
+    this.net.train(this.dataSet, {
+        log: (error) => console.log(error),
+        iterations: 1000,    // the maximum times to iterate the training data --> number greater than 0
+        errorThresh: 0.02,   // the acceptable error percentage from training data --> number between 0 and 1
+        learningRate: 0.3,    // scales with delta to effect training rate --> number between 0 and 1
+        momentum: 0.1,        // scales with next layer's change value --> number between 0 and 1
+        callbackPeriod: 100,   // the number of iterations through the training data between callback calls --> number greater than 0
+        timeout: Infinity     // the max number of milliseconds to train for --> number greater than 0
+    });
+    // сохраняем нейросеть в файл 
+    this.sendTrain(this.net.toJSON());
+    // сохраняем датасет
+    this.sendData(this.dataSet);
+    // let json = this.net.toJSON();
+    // this.net.fromJSON(json);
+  }
 
   destroy() {
-
+    this.destroyed = true;
+    if (this.goBackTimer) this.goBackTimer.destroy();
   }
 }
 

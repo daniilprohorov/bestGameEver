@@ -1,11 +1,11 @@
 import MultiKey from "./multi-key.js";
 import Phaser from "phaser";
 
-const    CAT_JUMP_VELOCITY        = -17;
-const    CAT_WALL_JUMP_VELOCITY   = -12;
+const    CAT_JUMP_VELOCITY        = -15;
+const    CAT_WALL_JUMP_VELOCITY   = -11;
 const    CAT_SENSOR_BOTTOM_WIDTH  = 12;
 const    CAT_SENSOR_SIDE_WIDTH    = 20;
-const    CAT_X_MAX_VELOCITY       = 10;
+const    CAT_X_MAX_VELOCITY       = 7;
 const    CAT_X_FORCE              = 0.1;
 const    CAT_WALL_JUMP_Y_VELOCITY = 5;
 const    CAT_JUMP_ANIM_COUNT      = 20;
@@ -260,6 +260,6 @@ export default class Cat {
   }
 
 
-  destroy() {}
+  destroy() {this.destroyed = true;}
 }
 
