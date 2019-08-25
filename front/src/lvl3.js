@@ -9,6 +9,7 @@ export default class Lvl3 extends Phaser.Scene {
     preload (){
         this.load.image("tiles0", "res/tileset0.png");
         this.load.image("tiles1", "res/tileset1.png");
+        this.load.image("tiles2", "res/tileset2.png");
         this.load.image("dog", "res/dog.png");
         this.load.tilemapTiledJSON("map", "res/map.json");
         this.load.spritesheet('cat',
@@ -23,8 +24,9 @@ export default class Lvl3 extends Phaser.Scene {
 
         const tileset0 = map.addTilesetImage("tileset0", "tiles0");
         const tileset1 = map.addTilesetImage("tileset1", "tiles1");
+        const tileset2 = map.addTilesetImage("tileset2", "tiles2");
         
-        const tileset = [tileset0, tileset1];
+        const tileset = [tileset0, tileset1, tileset2];
 
         const sky    = map.createStaticLayer("sky", tileset, 0, 0);
         const background = map.createStaticLayer("background", tileset, 0, 0);
