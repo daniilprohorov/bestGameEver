@@ -37,6 +37,7 @@ export default class Lvl1 extends Phaser.Scene {
 
 		gameObjects1.setCollisionByProperty({ collides: true }); 
 		gameObjects.setCollisionByProperty({ collides: true }); 
+
 		ground.setCollisionByProperty({ collides: true }); 
 
         this.matter.world.convertTilemapLayer(gameObjects);
