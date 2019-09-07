@@ -5,8 +5,8 @@ import Menu from "./menu.js";
 // const menu = new Menu();
 const config = {
     type: Phaser.AUTO,
-    width: 2000,
-    height: 1000,
+    width: 4000,
+    height: 2000,
     pixelArt: true,
     roundPixels: true, 
     scene: Menu,
