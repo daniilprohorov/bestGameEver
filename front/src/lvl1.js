@@ -44,6 +44,7 @@ export default class Lvl1 extends Phaser.Scene {
         this.matter.world.convertTilemapLayer(gameObjects1);
         this.matter.world.convertTilemapLayer(ground);
 
+        
         this.matter.world.createDebugGraphic();
 
         this.cat = new Cat(this, 18500, 500, 'cat');
