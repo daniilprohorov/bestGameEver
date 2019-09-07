@@ -30,18 +30,22 @@ export default class Lvl1 extends Phaser.Scene {
 
         const sky    = map.createStaticLayer("sky", tileset, 0, 0);
         const background = map.createStaticLayer("background", tileset, 0, 0);
+        const water = map.createStaticLayer("water", tileset, 0, 0);
         const ground = map.createDynamicLayer("ground", tileset, 0, 0);
+        const gameObjects1 = map.createStaticLayer("gameObjects1", tileset, 0, 0);
         const gameObjects = map.createStaticLayer("gameObjects", tileset, 0, 0);
 
+		gameObjects1.setCollisionByProperty({ collides: true }); 
 		gameObjects.setCollisionByProperty({ collides: true }); 
 		ground.setCollisionByProperty({ collides: true }); 
 
         this.matter.world.convertTilemapLayer(gameObjects);
+        this.matter.world.convertTilemapLayer(gameObjects1);
         this.matter.world.convertTilemapLayer(ground);
 
         this.matter.world.createDebugGraphic();
 
-        this.cat = new Cat(this, 1500, 1800, 'cat');
+        this.cat = new Cat(this, 18500, 500, 'cat');
         // context, x, y, tag, player_sprite, learning, autoMoving
         this.dog = new Dog(this, 100, 1800, 'dog', this.cat.sprite, false, true);
         

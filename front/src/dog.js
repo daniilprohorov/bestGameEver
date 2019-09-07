@@ -26,6 +26,7 @@ export default class Dog {
     this.gameOver = false;
     this.learning = learning;
     this.autoMove = autoMove;
+
     
 
     // Create the physics-based sprite that we will move around and animate
@@ -158,7 +159,7 @@ export default class Dog {
     this.goBackFlag  = true;
 
     const config = {
-        hiddenLayers: [40, 40, 40, 40, 40],
+        hiddenLayers: [20, 20, 20, 20, 20],
         activation: 'sigmoid',  // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
     };
 
@@ -265,7 +266,7 @@ export default class Dog {
         sprite.setVelocityY(DOG_JUMP_VELOCITY);
         let dataSet = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
         this.dataSet.push({input : dataSet, output : {jump : 1}});
-        console.log(this.dataSet);
+        // console.log(this.dataSet);
         this.jump = false;
     }
 	if (isSend) {
@@ -277,7 +278,7 @@ export default class Dog {
     if(this.isRunToggle) {
         let dataTest = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
         let out = this.net.run(dataTest);
-        console.log(out);
+        // console.log(out);
         if (out.left > out.right && out.left > out.jump) {
             this.left = true;
         }
@@ -352,7 +353,7 @@ export default class Dog {
     this.net.train(this.dataSet, {
         log: (error) => console.log(error),
         iterations: 2000,    // the maximum times to iterate the training data --> number greater than 0
-        errorThresh: 0.005,   // the acceptable error percentage from training data --> number between 0 and 1
+        errorThresh: 0.02,   // the acceptable error percentage from training data --> number between 0 and 1
         learningRate: 0.3,    // scales with delta to effect training rate --> number between 0 and 1
         momentum: 0.1,        // scales with next layer's change value --> number between 0 and 1
         callbackPeriod: 100,   // the number of iterations through the training data between callback calls --> number greater than 0
