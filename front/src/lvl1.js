@@ -47,7 +47,8 @@ export default class Lvl1 extends Phaser.Scene {
         
         this.matter.world.createDebugGraphic();
 
-        this.cat = new Cat(this, 25500, 500, 'cat');
+        this.cat = new Cat(this, 1500, 1800, 'cat');
+
         // context, x, y, tag, player_sprite, learning, autoMoving
         this.dog = new Dog(this, 100, 1800, 'dog', this.cat.sprite, false, true);
         

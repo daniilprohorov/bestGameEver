@@ -32,6 +32,7 @@ export default class Lvl2 extends Phaser.Scene {
         const background = map.createStaticLayer("background", tileset, 0, 0);
         const ground = map.createDynamicLayer("ground", tileset, 0, 0);
         const gameObjects = map.createStaticLayer("gameObjects", tileset, 0, 0);
+        const gameObjects1 = map.createStaticLayer("gameObjects1", tileset, 0, 0);
 
 		gameObjects.setCollisionByProperty({ collides: true }); 
 		ground.setCollisionByProperty({ collides: true }); 

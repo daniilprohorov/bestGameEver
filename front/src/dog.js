@@ -159,7 +159,7 @@ export default class Dog {
     this.goBackFlag  = true;
 
     const config = {
-        hiddenLayers: [20, 20, 20, 20, 20],
+        hiddenLayers: [30, 30, 30],
         activation: 'sigmoid',  // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
     };
 
@@ -182,10 +182,10 @@ export default class Dog {
     
     // lvl1 or lvl2
     if(this.autoMove) {
-        // загружаем нейросеть 
-        this.getTrain();
         // загружаем датасет
         this.getData();
+        // загружаем нейросеть 
+        this.getTrain();
     }
 
   }
@@ -278,7 +278,7 @@ export default class Dog {
     if(this.isRunToggle) {
         let dataTest = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
         let out = this.net.run(dataTest);
-        // console.log(out);
+        console.log(out);
         if (out.left > out.right && out.left > out.jump) {
             this.left = true;
         }
@@ -347,7 +347,9 @@ export default class Dog {
         this.gameOver = true;
       });
   }
+    
   train() {
+      console.log("ОБУЧЕНИЕ");
       console.log(this.dataSet);
     // обучаем нейросеть
     this.net.train(this.dataSet, {
