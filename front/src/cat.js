@@ -1,6 +1,10 @@
 import MultiKey from "./multi-key.js";
 import Phaser from "phaser";
 
+//kwerqwerqwer
+//kwerqwerqwer
+//kwerqwerqwer
+//kwerqwerqwer
 const    CAT_JUMP_VELOCITY        = -15;
 const    CAT_WALL_JUMP_VELOCITY   = -11;
 const    CAT_SENSOR_BOTTOM_WIDTH  = 12;
