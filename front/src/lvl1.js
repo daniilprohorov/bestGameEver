@@ -8,11 +8,11 @@ export default class Lvl1 extends Phaser.Scene {
       super("lvl1");
     }
     preload (){
-        this.load.image("tiles0", "res/tileset0.png");
-        this.load.image("tiles1", "res/tileset1.png");
-        this.load.image("tiles2", "res/tileset2.png");
+        this.load.image("tiles0", "res/lvl1/tileset0.png");
+        this.load.image("tiles1", "res/lvl1/tileset1.png");
+        this.load.image("tiles2", "res/lvl1/tileset2.png");
+        this.load.tilemapTiledJSON("map", "res/lvl1/map.json");
         this.load.image("dog", "res/dog.png");
-        this.load.tilemapTiledJSON("map", "res/map.json");
         this.load.spritesheet('cat',
             'res/cat.png',
             { frameWidth: 150, frameHeight: 150 }
