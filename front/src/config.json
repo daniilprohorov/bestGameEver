@@ -1,0 +1,22 @@
+{
+    "catConst":{
+        "jumpVelocity" : -15,
+        "wallJumpVelocity" : -11,
+        "sensorBottomWidth" : 12,
+        "sensorSideWidth" : 20,
+        "xMaxVelocity" : 7,
+        "xForce" : 0.1,
+        "wallJumpYVelocity" : 5,
+        "maxAngle" : 50,
+        "jumpAnimCount" : 20
+    }, 
+    "dogConst":{
+        "jumpVelocity" : -17,
+        "wallJumpVelocity" : -12,
+        "sensorBottomWidth" : 10,
+        "sensorSideWidth" : 600,
+        "xMaxVelocity" : 7,
+        "xForce" : 0.05
+    }
+}
+

@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import PhaserMatterCollisionPlugin from "phaser-matter-collision-plugin";
 import Menu from "./menu.js";
 
-// const menu = new Menu();
 const config = {
     type: Phaser.AUTO,
     width: 4000,
