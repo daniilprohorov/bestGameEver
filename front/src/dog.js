@@ -1,15 +1,17 @@
-
 import MultiKey from "./multi-key.js";
 import Phaser from "phaser";
 import brain from "brain.js";
 import axios from "axios";
 
-const DOG_JUMP_VELOCITY       = -17;
-const DOG_WALL_JUMP_VELOCITY  = -12;
-const DOG_SENSOR_BOTTOM_WIDTH = 10;
-const DOG_SENSOR_SIDE_WIDTH   = 600;
-const DOG_X_MAX_VELOCITY      = 7;
-const DOG_X_FORCE             = 0.05;
+// get constants from config file
+const dog = require('./config.json').dogConst;
+
+const DOG_JUMP_VELOCITY       = dog.jumpVelocity;
+const DOG_WALL_JUMP_VELOCITY  = dog.wallJumpVelocity;
+const DOG_SENSOR_BOTTOM_WIDTH = dog.sensorBottomWidth;
+const DOG_SENSOR_SIDE_WIDTH   = dog.sensorSideWidth;
+const DOG_X_MAX_VELOCITY      = dog.xMaxVelocity;
+const DOG_X_FORCE             = dog.xForce;
 
 // wasOnGround = false;
 // stop = false
@@ -18,177 +20,166 @@ const DOG_X_FORCE             = 0.05;
 
 
 export default class Dog {
-
   
-  constructor(scene, x, y, tag, player, learning, autoMove) {
-    this.scene = scene;
-    this.player = player;
-    this.gameOver = false;
-    this.learning = learning;
-    this.autoMove = autoMove;
+    constructor(scene, x, y, tag, player, learning) {
+        this.scene = scene;
+        this.player = player;
+        this.gameOver = false;
+        this.learning = learning;
 
     
 
-    // Create the physics-based sprite that we will move around and animate
-    this.sprite = scene.matter.add.sprite(0, 0, tag, 0);
+        // Create the physics-based sprite that we will move around and animate
+        this.sprite = scene.matter.add.sprite(0, 0, tag, 0);
 
-    const sensorR = 40;
-    const stepH = sensorR * 4;
-    const stepW = sensorR * 4;
+        const sensorR = 40;
+        const stepH = sensorR * 4;
+        const stepW = sensorR * 4;
 
-    const { Body, Bodies } = Phaser.Physics.Matter.Matter; // Native Matter modules
-    const { width: w, height: h } = this.sprite;
+        const { Body, Bodies } = Phaser.Physics.Matter.Matter; // Native Matter modules
+        const { width: w, height: h } = this.sprite;
 
-    const width = w*8; 
-    const height = w*8; 
-    const mainBody = Bodies.rectangle((width-stepH)/2, (height-stepW)/2, w, h, { chamfer: { radius: h*0.4 } });
+        const width = w*8; 
+        const height = w*8; 
+        const mainBody = Bodies.rectangle((width-stepH)/2, (height-stepW)/2, w, h, { chamfer: { radius: h*0.4 } });
     
 
-    // ground sensor
-    this.ground = Bodies.rectangle((width-stepH)/2, (width-stepH + h)/2 , w , DOG_SENSOR_BOTTOM_WIDTH, { isSensor: true }),
+        // ground sensor
+        this.ground = Bodies.rectangle((width-stepH)/2, (width-stepH + h)/2 , w , DOG_SENSOR_BOTTOM_WIDTH, { isSensor: true }),
     
 
-    // sensors for neural network
-    this.sensors = [];
-    // Track which sensors are touching something
-    for ( let y = 0; y < height; y += stepH) {
-        for ( let x = 0; x < width; x += stepW) {
-            this.sensors.push(Bodies.circle( x, y, sensorR, {isSensor : true}));
+        // sensors for neural network
+        this.sensors = [];
+        // Track which sensors are touching something
+        for ( let y = 0; y < height; y += stepH) {
+            for ( let x = 0; x < width; x += stepW) {
+                this.sensors.push(Bodies.circle( x, y, sensorR, {isSensor : true}));
+            }
         }
-        
-    }
-    const compoundBody = Body.create({
-      parts: [mainBody, this.ground].concat(this.sensors),
-      frictionStatic: 0.1,
-      frictionAir: 0.01,
-      friction: 0.02,
-      mass: 45
-    });
-    this.sprite
-      .setExistingBody(compoundBody)
-	  .setFixedRotation() // Sets inertia to infinity so the player can't rotate
-      .setPosition(x, y);
+        const compoundBody = Body.create({
+          parts: [mainBody, this.ground].concat(this.sensors),
+          frictionStatic: 0.1,
+          frictionAir: 0.01,
+          friction: 0.02,
+          mass: 45
+        });
+        this.sprite
+          .setExistingBody(compoundBody)
+          .setFixedRotation() // Sets inertia to infinity so the player can't rotate
+          .setPosition(x, y);
     
 
-    // Track which sensors are touching something
-    this.isOnGround = false;
-    // this.nTouch = new Array(this.sensors.length).fill(0)
-    this.nTouch = []; 
-    for( let i = 0; i < this.sensors.length; i += 1){
-            this.nTouch.push(0);
-    }
+        // Track which sensors are touching something
+        this.isOnGround = false;
+        // this.nTouch = new Array(this.sensors.length).fill(0)
+        this.nTouch = []; 
+        for( let i = 0; i < this.sensors.length; i += 1){
+                this.nTouch.push(0);
+        }
 
 
 
     
-    // flag to be able to go up to wall
-    this.jumpToWall = true;
+        // flag to be able to go up to wall
+        this.jumpToWall = true;
 
-    // neural network sensors
-    for( let i = 0; i < this.sensors.length; i += 1){
+        // neural network sensors
+        for( let i = 0; i < this.sensors.length; i += 1){
+            scene.matterCollision.addOnCollideStart({
+              objectA: this.sensors[i],
+              callback: function({ bodyA, bodyB, pair }){
+                  if(this.sensors[i] === bodyA) {
+                      this.nTouch[i] = 1;
+                  } else {
+                      this.nTouch[i] = 0;
+                  }
+              },
+              context: this
+            });
+            scene.matterCollision.addOnCollideActive({
+              objectA: this.sensors[i],
+              callback: function({ bodyA, bodyB, pair }){
+                  if(this.sensors[i] === bodyA) {
+                      this.nTouch[i] = 1;
+                  } else {
+                      this.nTouch[i] = 0;
+                  }
+              },
+              context: this
+            });
+        }
+
+        // ground sensor
         scene.matterCollision.addOnCollideStart({
-          objectA: this.sensors[i],
-          callback: function({ bodyA, bodyB, pair }){
-              if(this.sensors[i] === bodyA) {
-                  this.nTouch[i] = 1;
-              } else {
-                  this.nTouch[i] = 0;
-              }
-          },
+          objectA: this.ground,
+          callback: this.onGroundCollide,
           context: this
         });
         scene.matterCollision.addOnCollideActive({
-          objectA: this.sensors[i],
-          callback: function({ bodyA, bodyB, pair }){
-              if(this.sensors[i] === bodyA) {
-                  this.nTouch[i] = 1;
-              } else {
-                  this.nTouch[i] = 0;
-              }
-          },
+          objectA: this.ground,
+          callback: this.onGroundCollide,
           context: this
         });
-    }
 
-    // ground sensor
-    scene.matterCollision.addOnCollideStart({
-      objectA: this.ground,
-      callback: this.onGroundCollide,
-      context: this
-    });
-    scene.matterCollision.addOnCollideActive({
-      objectA: this.ground,
-      callback: this.onGroundCollide,
-      context: this
-    });
-
-    // game over body sensor
-    scene.matterCollision.addOnCollideStart({
-      objectA: mainBody,
-      callback: this.onDogCollide,
-      context: this
-    });
-    scene.matterCollision.addOnCollideActive({
-      objectA: mainBody,
-      callback: this.onDogCollide,
-      context: this
-    });
+        // game over body sensor
+        scene.matterCollision.addOnCollideStart({
+          objectA: mainBody,
+          callback: this.onDogCollide,
+          context: this
+        });
+        scene.matterCollision.addOnCollideActive({
+          objectA: mainBody,
+          callback: this.onDogCollide,
+          context: this
+        });
 
 
-    // Track the keys
-    const { A, W, D, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN} = Phaser.Input.Keyboard.KeyCodes;
-    // 1 - импортировать нейросеть
-    // 2 - обучить нейросеть и записать в файл
-    // 3 - старт/стоп собаки
-    // 4 - экспорт датасета
-    // 5 - импорт датасета
-    // 6 - рестарт игры
-    // 7 - восстановить прежнее обучение
-    this.leftInput   = new MultiKey(scene, [A]);
-    this.rightInput  = new MultiKey(scene, [D]);
-    this.jumpInput   = new MultiKey(scene, [W]);
-    this.sendKey     = new MultiKey(scene, [ONE]);
-    this.trainKey    = new MultiKey(scene, [TWO]);
-    this.runKey      = new MultiKey(scene, [THREE]);
-    this.sendDataKey = new MultiKey(scene, [FOUR]);
-    this.getDataKey  = new MultiKey(scene, [FIVE]);
-    this.restartKey  = new MultiKey(scene, [SIX]);
-    this.goBackKey   = new MultiKey(scene, [SEVEN]);
+        // Track the keys
+        const { A, W, D, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN} = Phaser.Input.Keyboard.KeyCodes;
+        // 1 - импортировать нейросеть
+        // 2 - обучить нейросеть и записать в файл
+        // 3 - старт/стоп собаки
+        // 4 - экспорт датасета
+        // 5 - импорт датасета
+        // 6 - рестарт игры
+        // 7 - восстановить прежнее обучение
+        this.leftInput   = new MultiKey(scene, [A]);
+        this.rightInput  = new MultiKey(scene, [D]);
+        this.jumpInput   = new MultiKey(scene, [W]);
+        this.sendKey     = new MultiKey(scene, [ONE]);
+        this.trainKey    = new MultiKey(scene, [TWO]);
+        this.runKey      = new MultiKey(scene, [THREE]);
+        this.sendDataKey = new MultiKey(scene, [FOUR]);
+        this.getDataKey  = new MultiKey(scene, [FIVE]);
+        this.restartKey  = new MultiKey(scene, [SIX]);
+        this.goBackKey   = new MultiKey(scene, [SEVEN]);
     
-    // флаг чтобы не было много ивентов при нажатии кнопки 7
-    this.goBackFlag  = true;
+        // флаг чтобы не было много ивентов при нажатии кнопки 7
+        this.goBackFlag  = true;
 
-    const config = {
-        hiddenLayers: [30, 30, 30],
-        activation: 'sigmoid',  // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
-    };
+        const config = {
+            hiddenLayers: [30, 30, 30],
+            activation: 'sigmoid',  // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
+        };
 
-    this.net = new brain.NeuralNetwork(config);
+        this.net = new brain.NeuralNetwork(config);
 
-    this.right = false;
-    this.left = false;
-    this.jump = false;
+        this.right = false;
+        this.left = false;
+        this.jump = false;
 	
-	this.isRunToggle = false;	
-	this.isSend = false;	
+        this.isRunToggle = false;	
+        this.isSend = false;	
 
-    this.scene.events.on("update", this.update, this);
-    // this.scene.events.on("update", this.update, this);
-    // Before matter's update, reset our record of which surfaces the player is touching.
-    scene.matter.world.on("beforeupdate", this.resetTouching, this);
+        this.scene.events.on("update", this.update, this);
+        // this.scene.events.on("update", this.update, this);
+        // Before matter's update, reset our record of which surfaces the player is touching.
+        scene.matter.world.on("beforeupdate", this.resetTouching, this);
 
-    // инициализируем датасет
-    this.dataSet = [];
-    
-    // lvl1 or lvl2
-    if(this.autoMove) {
-        // загружаем датасет
-        this.getData();
-        // загружаем нейросеть 
-        this.getTrain();
+        // инициализируем датасет
+        this.dataSet = [];
+
     }
-
-  }
   onGroundCollide({ bodyA, bodyB, pair }) {
     if (bodyB.isSensor) return; // We only care about collisions with physical objects
     if (bodyA === this.ground) {

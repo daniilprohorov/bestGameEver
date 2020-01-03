@@ -29,14 +29,14 @@ export default class Lvl1 extends Phaser.Scene {
         
         const tileset = [tileset0, tileset1, tileset2];
 
-        const sky    = map.createStaticLayer("sky", tileset, 0, 0);
-        const background  = map.createStaticLayer("background2", tileset, 0, 0);
-        const background1 = map.createStaticLayer("background1", tileset, 0, 0);
-        const background2 = map.createStaticLayer("background", tileset, 0, 0);
-        const water = map.createStaticLayer("front", tileset, 0, 0);
-        const ground = map.createDynamicLayer("ground", tileset, 0, 0);
+        const sky          = map.createStaticLayer("sky", tileset, 0, 0);
+        const background   = map.createStaticLayer("background2", tileset, 0, 0);
+        const background1  = map.createStaticLayer("background1", tileset, 0, 0);
+        const background2  = map.createStaticLayer("background", tileset, 0, 0);
+        const water        = map.createStaticLayer("front", tileset, 0, 0);
+        const ground       = map.createStaticLayer("ground", tileset, 0, 0);
         const gameObjects1 = map.createStaticLayer("gameObjects1", tileset, 0, 0);
-        const gameObjects = map.createStaticLayer("gameObjects", tileset, 0, 0);
+        const gameObjects  = map.createStaticLayer("gameObjects", tileset, 0, 0);
 
 		gameObjects1.setCollisionByProperty({ collides: true }); 
 		gameObjects.setCollisionByProperty({ collides: true }); 

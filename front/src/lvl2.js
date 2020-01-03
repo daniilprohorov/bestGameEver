@@ -7,11 +7,11 @@ export default class Lvl2 extends Phaser.Scene {
       super("lvl2");
     }
     preload (){
-        this.load.image("tiles0", "res/tileset0.png");
-        this.load.image("tiles1", "res/tileset1.png");
-        this.load.image("tiles2", "res/tileset2.png");
+        this.load.image("tiles0", "res/lvl1/tileset0.png");
+        this.load.image("tiles1", "res/lvl1/tileset1.png");
+        this.load.image("tiles2", "res/lvl1/tileset2.png");
+        this.load.tilemapTiledJSON("map", "res/lvl1/map.json");
         this.load.image("dog", "res/dog.png");
-        this.load.tilemapTiledJSON("map", "res/map.json");
         this.load.spritesheet('cat',
             'res/cat.png',
             { frameWidth: 150, frameHeight: 150 }
@@ -34,17 +34,19 @@ export default class Lvl2 extends Phaser.Scene {
         const gameObjects = map.createStaticLayer("gameObjects", tileset, 0, 0);
         const gameObjects1 = map.createStaticLayer("gameObjects1", tileset, 0, 0);
 
+		gameObjects1.setCollisionByProperty({ collides: true }); 
 		gameObjects.setCollisionByProperty({ collides: true }); 
 		ground.setCollisionByProperty({ collides: true }); 
 
+        this.matter.world.convertTilemapLayer(gameObjects1);
         this.matter.world.convertTilemapLayer(gameObjects);
         this.matter.world.convertTilemapLayer(ground);
 
         this.matter.world.createDebugGraphic();
 
         this.cat = new Cat(this, 1500, 1800, 'cat');
-        // context, x, y, tag, player_sprite, learning, autoMoving
-        this.dog = new Dog(this, 100, 1800, 'dog', this.cat.sprite, true, true);
+        // context, x, y, tag, player_sprite, learning
+        this.dog = new Dog(this, 100, 1500, 'dog', this.cat.sprite, true);
         
         const camera = this.cameras.main;
         camera.startFollow(this.cat.sprite, false, 0.05, 0.5, -160, 250);
