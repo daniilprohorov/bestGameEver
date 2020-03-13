@@ -189,7 +189,7 @@ export default class Dog {
   onDogCollide({ bodyA, bodyB, pair }) {
     if (bodyB.isSensor) return; // We only care about collisions with physical objects
     if (this.player.body.parts.some( x => {return x === bodyB})) {
-        console.log("GAME OVER");
+        //console.log("GAME OVER");
         if(this.learning) {
             this.train(); 
         }
@@ -242,21 +242,21 @@ export default class Dog {
    
     if (isLeftKeyDown || this.left) {
         sprite.applyForce({ x: -DOG_X_FORCE, y: 0 });
-        let dataSet = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
-        this.dataSet.push({input : dataSet, output : {left : 1}});
+        //let dataSet = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
+        //this.dataSet.push({input : dataSet, output : {left : 1}});
         this.left = false;
 
     } else if (isRightKeyDown || this.right) {
         sprite.applyForce({ x: DOG_X_FORCE, y: 0 });
-        let dataSet = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
-        this.dataSet.push({input : dataSet, output : {right : 1}});
+        //let dataSet = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
+        //this.dataSet.push({input : dataSet, output : {right : 1}});
         this.right = false;
     }
 
 	if ((isJumpKeyDown || this.jump )  && isOnGround) {
         sprite.setVelocityY(DOG_JUMP_VELOCITY);
-        let dataSet = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
-        this.dataSet.push({input : dataSet, output : {jump : 1}});
+        //let dataSet = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
+        //this.dataSet.push({input : dataSet, output : {jump : 1}});
         // console.log(this.dataSet);
         this.jump = false;
     }
@@ -267,9 +267,9 @@ export default class Dog {
         this.train(); 
     }
     if(this.isRunToggle) {
-        let dataTest = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
-        let out = this.net.run(dataTest);
-        console.log(out);
+        //let dataTest = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
+        //let out = this.net.run(dataTest);
+        //console.log(out);
         if (out.left > out.right && out.left > out.jump) {
             this.left = true;
         }
@@ -298,17 +298,17 @@ export default class Dog {
   sendTrain(data) {
     axios.post('/sendTrain', {data : data})
       .then(function (response) {
-        console.log(response);
+        //console.log(response);
       })
       .catch(function (error) {
-        console.log(error);
+        //console.log(error);
       });
   }
 
   getTrain() {
     axios.post('/getTrain')
       .then(response => {
-          console.log(response);
+          //console.log(response);
         // импортируем нейросеть из полученного JSON
         this.net.fromJSON(response.data);
         // запускаем игру
@@ -318,10 +318,10 @@ export default class Dog {
   sendData(data) {
     axios.post('/sendData', {data : data})
       .then(function (response) {
-        console.log(response);
+        //console.log(response);
       })
       .catch(function (error) {
-        console.log(error);
+        //console.log(error);
       });
   }
   getData() {
@@ -333,15 +333,15 @@ export default class Dog {
   goBack() {
     axios.post('/goBack')
       .then(response => {
-          console.log(response);
+          //console.log(response);
         // перезапускаем игру
         this.gameOver = true;
       });
   }
     
   train() {
-      console.log("ОБУЧЕНИЕ");
-      console.log(this.dataSet);
+      //console.log("ОБУЧЕНИЕ");
+      //console.log(this.dataSet);
     // обучаем нейросеть
     this.net.train(this.dataSet, {
         log: (error) => console.log(error),
