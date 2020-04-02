@@ -1,3 +1,4 @@
+import MultiKey from "./multi-key.js";
 import Phaser from "phaser";
 import Cat from "./cat.js";
 import Dog from "./dog.js";
@@ -20,28 +21,32 @@ export default class Lvl1 extends Phaser.Scene {
 
     }
     create (){
-        const map = this.make.tilemap({ key: "map" });
+
+        const map      = this.make.tilemap({ key: "map" });
 
         const tileset0 = map.addTilesetImage("tileset0", "tiles0");
         const tileset1 = map.addTilesetImage("tileset1", "tiles1");
         const tileset2 = map.addTilesetImage("tileset2", "tiles2");
-        const tileset = [tileset0, tileset1, tileset2];
+        const tileset  = [tileset0, tileset1, tileset2];
 
-        const sky         = map.createStaticLayer("sky", tileset, 0, 0);
-        const background5 = map.createStaticLayer("background5", tileset, 0, 0);
-        const background4 = map.createStaticLayer("background4", tileset, 0, 0);
-        const background3 = map.createStaticLayer("background3", tileset, 0, 0);
-        const background2 = map.createStaticLayer("background2", tileset, 0, 0);
-        const background1 = map.createStaticLayer("background1", tileset, 0, 0);
-        const ground      = map.createDynamicLayer("ground", tileset, 0, 0);
+        const sky          = map.createStaticLayer("sky", tileset, 0, 0);
+        const background5  = map.createStaticLayer("background5", tileset, 0, 0);
+        const background4  = map.createStaticLayer("background4", tileset, 0, 0);
+        const background3  = map.createStaticLayer("background3", tileset, 0, 0);
+        const background2  = map.createStaticLayer("background2", tileset, 0, 0);
+        const background1  = map.createStaticLayer("background1", tileset, 0, 0);
+        const ground       = map.createDynamicLayer("ground", tileset, 0, 0);
         const gameObjects1 = map.createStaticLayer("gameObjects1", tileset, 0, 0);
-        const gameObjects = map.createStaticLayer("gameObjects", tileset, 0, 0);
-        const water = map.createStaticLayer("front", tileset, 0, 0);
+        const gameObjects  = map.createStaticLayer("gameObjects", tileset, 0, 0);
+        const water        = map.createStaticLayer("front", tileset, 0, 0);
 
-		gameObjects1.setCollisionByProperty({ collides: true });
-		gameObjects.setCollisionByProperty({ collides: true });
+        const { ESC } = Phaser.Input.Keyboard.KeyCodes;
+        this.esc      = new MultiKey(this, [ESC]);
 
-		ground.setCollisionByProperty({ collides: true });
+        gameObjects1.setCollisionByProperty({ collides: true });
+        gameObjects.setCollisionByProperty({ collides: true });
+
+        ground.setCollisionByProperty({ collides: true });
 
         this.matter.world.convertTilemapLayer(gameObjects);
         this.matter.world.convertTilemapLayer(gameObjects1);
@@ -62,7 +67,8 @@ export default class Lvl1 extends Phaser.Scene {
     }
 
     update (){
-        if (this.dog.gameOver === true) {
+        this.exit = this.esc.isDown();
+        if (this.dog.catCollide === true || this.exit === true) {
             this.cat.destroy();
             this.dog.destroy();
             this.scene.start("menu");

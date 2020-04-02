@@ -1,6 +1,5 @@
 import MultiKey from "./multi-key.js";
 import Phaser from "phaser";
-import brain from "brain.js";
 import axios from "axios";
 
 // tf
@@ -39,7 +38,7 @@ export default class Dog {
         this.model = createModel(this.inputCount);
         this.scene = scene;
         this.player = player;
-        this.gameOver = false;
+        this.catCollide = false;
         this.learning = learning;
 
 
@@ -147,7 +146,7 @@ export default class Dog {
 
 
         // Track the keys
-        const { A, W, D, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN} = Phaser.Input.Keyboard.KeyCodes;
+        const { A, W, D} = Phaser.Input.Keyboard.KeyCodes;
         // 1 - импортировать нейросеть
         // 2 - обучить нейросеть и записать в файл
         // 3 - старт/стоп собаки
@@ -158,29 +157,11 @@ export default class Dog {
         this.leftInput   = new MultiKey(scene, [A]);
         this.rightInput  = new MultiKey(scene, [D]);
         this.jumpInput   = new MultiKey(scene, [W]);
-        this.sendKey     = new MultiKey(scene, [ONE]);
-        this.trainKey    = new MultiKey(scene, [TWO]);
-        this.runKey      = new MultiKey(scene, [THREE]);
-        this.sendDataKey = new MultiKey(scene, [FOUR]);
-        this.getDataKey  = new MultiKey(scene, [FIVE]);
-        this.restartKey  = new MultiKey(scene, [SIX]);
-        this.goBackKey   = new MultiKey(scene, [SEVEN]);
-
-        // флаг чтобы не было много ивентов при нажатии кнопки 7
-        this.goBackFlag  = true;
-
-        const config = {
-            hiddenLayers: [30, 30, 30],
-            activation: 'sigmoid',  // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
-        };
-
-        this.net = new brain.NeuralNetwork(config);
 
         this.right = false;
         this.left = false;
         this.jump = false;
         this.isRunToggle = false;
-        this.isSend = false;
 
         this.scene.events.on("update", this.update, this);
         // this.scene.events.on("update", this.update, this);
@@ -194,9 +175,11 @@ export default class Dog {
     predict(inputList) {
         const weights = this.model.getWeights();
         // for (let i = 0; i < weights.length; i++) {
+        //     console.log(i);
         //     weights[i].print();
         // }
-        weights[0].print();
+
+        // weights[0].print();
         const xs = tf.tensor1d(inputList);
         const length = inputList.length;
         if (this.inputCount != length) {
@@ -232,11 +215,11 @@ export default class Dog {
   onDogCollide({ bodyA, bodyB, pair }) {
     if (bodyB.isSensor) return; // We only care about collisions with physical objects
       if (this.player.body.parts.some( x => {return x === bodyB;})) {
-        //console.log("GAME OVER");
-        if(this.learning) {
-            this.train();
-        }
-        this.gameOver = true;
+        // console.log("GAME OVER");
+        // if(this.learning) {
+        //     this.train();
+        // }
+        this.catCollide = true;
 
     }
   }
@@ -266,13 +249,6 @@ export default class Dog {
     const isRightKeyDown = this.rightInput.isDown();
     const isLeftKeyDown  = this.leftInput.isDown();
     const isJumpKeyDown  = this.jumpInput.isDown();
-    const isSend         = this.sendKey.isDown();
-    const isTrain        = this.trainKey.isDown();
-    const isSendData     = this.sendDataKey.isDown();
-    const isGetData      = this.getDataKey.isDown();
-    const isRestart      = this.restartKey.isDown();
-    const isGoBack       = this.goBackKey.isDown();
-    this.isRunToggle     = this.runKey.isDown() ? !this.isRunToggle : this.isRunToggle ;
 
     const isOnGround     = this.isOnGround;
     const isOnGroundInt  = this.isOnGround ? 1 : 0;
@@ -309,39 +285,6 @@ export default class Dog {
         // console.log(this.dataSet);
         this.jump = false;
     }
-	if (isSend) {
-        this.getTrain();
-	}
-    if (isTrain) {
-        this.train(); 
-    }
-    if(this.isRunToggle) {
-        //let dataTest = this.nTouch.concat([isOnGroundInt, playerRightInt]); 
-        //let out = this.net.run(dataTest);
-        //console.log(out);
-        if (out.left > out.right && out.left > out.jump) {
-            this.left = true;
-        }
-        else if ( out.right > out.left && out.right > out.jump ) {
-            this.right = true;
-        }
-        else if ( out.jump > out.left && out.jump > out.right) {
-            this.jump = true;
-        }
-    } 
-    if (isSendData) {
-        this.sendData(this.dataSet);
-    }
-    if (isGetData) {
-        this.getData();
-    }
-    if (isRestart) {
-        this.gameOver = true;
-    }
-    if (isGoBack && this.goBackFlag) {
-        this.goBackFlag = false;
-        this.goBack(); 
-    }
   }
 
   sendTrain(data) {
@@ -359,9 +302,9 @@ export default class Dog {
       .then(response => {
           //console.log(response);
         // импортируем нейросеть из полученного JSON
-        this.net.fromJSON(response.data);
+        //this.net.fromJSON(response.data);
         // запускаем игру
-        this.isRunToggle = true;
+        //this.isRunToggle = true;
       });
   }
   sendData(data) {
@@ -387,28 +330,9 @@ export default class Dog {
         this.gameOver = true;
       });
   }
-    
-  train() {
-      //console.log("ОБУЧЕНИЕ");
-      //console.log(this.dataSet);
-    // обучаем нейросеть
-    this.net.train(this.dataSet, {
-        log: (error) => console.log(error),
-        iterations: 2000,    // the maximum times to iterate the training data --> number greater than 0
-        errorThresh: 0.02,   // the acceptable error percentage from training data --> number between 0 and 1
-        learningRate: 0.3,    // scales with delta to effect training rate --> number between 0 and 1
-        momentum: 0.1,        // scales with next layer's change value --> number between 0 and 1
-        callbackPeriod: 100,   // the number of iterations through the training data between callback calls --> number greater than 0
-        timeout: Infinity     // the max number of milliseconds to train for --> number greater than 0
-    });
-    // сохраняем нейросеть в файл 
-    this.sendTrain(this.net.toJSON());
-    // сохраняем датасет
-    this.sendData(this.dataSet);
-  }
 
-  destroy() {
-    this.destroyed = true;
-  }
+    destroy() {
+        this.destroyed = true;
+    }
 }
 
