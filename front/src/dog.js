@@ -29,22 +29,18 @@ const createModel = (inputCount) => {
     return model;
 }
 
-
-
+const isDog = (obj) => {
+  obj.isDog = true;
+  return obj
+}
 export default class Dog {
 
-    constructor(scene, x, y, tag, player, learning) {
-        this.inputCount = 103;
-        this.model = createModel(this.inputCount);
-        this.scene = scene;
-        this.player = player;
-        this.catCollide = false;
-        this.learning = learning;
+    constructor(scene, x, y, tag, player, learning, n) {
 
 
         // Create the physics-based sprite that we will move around and animate
         this.sprite = scene.matter.add.sprite(0, 0, tag, 0);
-
+        this.tag = 'dog' + n;
         const sensorR = 40;
         const stepH = sensorR * 4;
         const stepW = sensorR * 4;
@@ -52,12 +48,19 @@ export default class Dog {
         const { Body, Bodies } = Phaser.Physics.Matter.Matter; // Native Matter modules
         const { width: w, height: h } = this.sprite;
 
+
         const width = w*8;
         const height = w*8;
-        const mainBody = Bodies.rectangle((width-stepH)/2, (height-stepW)/2, w, h, { chamfer: { radius: h*0.4 } });
-
+        const mainBody = isDog(Bodies.rectangle((width-stepH)/2, (height-stepW)/2, w, h, { chamfer: { radius: h*0.4 } }));
+        // let label = scene.add.text(-12.5,-12.5, this.tag,{
+        //     fontFamily:'Arial',
+        //     color:'#FFFFFF',
+        //     align:'center',
+        // }).setFontSize(18);
+        // label.setOrigin(0.5);
         // ground sensor
-        this.ground = Bodies.rectangle((width-stepH)/2, (width-stepH + h)/2 , w , DOG_SENSOR_BOTTOM_WIDTH, { isSensor: true }),
+
+        this.ground = isDog(Bodies.rectangle((width-stepH)/2, (width-stepH + h)/2 , w , DOG_SENSOR_BOTTOM_WIDTH, { isSensor: true }));
 
         // sensors for neural network
         this.sensors = [];
@@ -69,7 +72,15 @@ export default class Dog {
 
             }
         }
-        console.log(this.sensors);
+
+        // this.inputCount = sensors count;
+        this.inputCount = this.sensors.length + 3;
+        this.model = createModel(this.inputCount);
+        this.scene = scene;
+        this.player = player;
+        this.catCollide = false;
+        this.learning = learning;
+
         const compoundBody = Body.create({
           parts: [mainBody, this.ground].concat(this.sensors),
           frictionStatic: 0.1,
@@ -81,6 +92,17 @@ export default class Dog {
           .setExistingBody(compoundBody)
           .setFixedRotation() // Sets inertia to infinity so the player can't rotate
           .setPosition(x, y);
+
+        let text = scene.matter.add.text(0, 0, 'Testing');
+        scene.matter.add
+        this.sprite.add.text()
+        text.font = "Arial";
+        text.setOrigin(0.5, 0.5);
+
+        const newCategory  = scene.matter.world.nextCategory();
+        this.sprite.setCollisionCategory(newCategory)
+        this.sprite.setCollidesWith(1)
+
 
         // Track which sensors are touching something
         this.isOnGround = false;
@@ -99,6 +121,7 @@ export default class Dog {
             scene.matterCollision.addOnCollideStart({
               objectA: this.sensors[i],
               callback: function({ bodyA, bodyB, pair }){
+                  if(bodyB.isDog) return;
                   if(this.sensors[i] === bodyA) {
                       this.nTouch[i+3] = 1;
                   } else {
@@ -110,6 +133,7 @@ export default class Dog {
             scene.matterCollision.addOnCollideActive({
               objectA: this.sensors[i],
               callback: function({ bodyA, bodyB, pair }){
+                  if(bodyB.isDog) return;
                   if(this.sensors[i] === bodyA) {
                       this.nTouch[i+3] = 1;
                   } else {
@@ -126,11 +150,11 @@ export default class Dog {
           callback: this.onGroundCollide,
           context: this
         });
-        scene.matterCollision.addOnCollideActive({
-          objectA: this.ground,
-          callback: this.onGroundCollide,
-          context: this
-        });
+        // scene.matterCollision.addOnCollideActive({
+        //   objectA: this.ground,
+        //   callback: this.onGroundCollide,
+        //   context: this
+        // });
 
         // game over body sensor
         scene.matterCollision.addOnCollideStart({
@@ -138,11 +162,11 @@ export default class Dog {
           callback: this.onDogCollide,
           context: this
         });
-        scene.matterCollision.addOnCollideActive({
-          objectA: mainBody,
-          callback: this.onDogCollide,
-          context: this
-        });
+        // scene.matterCollision.addOnCollideActive({
+        //   objectA: mainBody,
+        //   callback: this.onDogCollide,
+        //   context: this
+        // });
 
 
         // Track the keys
@@ -206,16 +230,19 @@ export default class Dog {
         }
     }
   onGroundCollide({ bodyA, bodyB, pair }) {
-    if (bodyB.isSensor) return; // We only care about collisions with physical objects
-    if (bodyA === this.ground) {
-        this.nTouch[0] = 1;
-        this.isOnGround = true;
-    }
+      if (bodyB.isSensor) return; // We only care about collisions with physical objects
+      if (bodyB.isDog) return; // Not collide with other dogs
+      if (bodyA === this.ground) {
+          this.nTouch[0] = 1;
+          this.isOnGround = true;
+      }
   }
   onDogCollide({ bodyA, bodyB, pair }) {
     if (bodyB.isSensor) return; // We only care about collisions with physical objects
+    if (bodyB.isDog && bodyA.isDog) return; // Not collide with other dogs
       if (this.player.body.parts.some( x => {return x === bodyB;})) {
-        // console.log("GAME OVER");
+        console.log("GAME OVER");
+        console.log(this.tag);
         // if(this.learning) {
         //     this.train();
         // }

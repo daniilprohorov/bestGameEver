@@ -46,22 +46,26 @@ export default class Lvl2 extends Phaser.Scene {
         this.matter.world.convertTilemapLayer(gameObjects);
         this.matter.world.convertTilemapLayer(ground);
 
+
         this.matter.world.createDebugGraphic();
 
         this.cat = new Cat(this, 1500, 1800, 'cat');
         // context, x, y, tag, player_sprite, learning
-        this.dog0 = new Dog(this, 100, 1500, 'dog', this.cat.sprite, true);
-        this.dog1 = new Dog(this, 100, 1500, 'dog', this.cat.sprite, true);
-        // this.dog2 = new Dog(this, 100, 1500, 'dog', this.cat.sprite, true);
-        // this.dog3 = new Dog(this, 100, 1500, 'dog', this.cat.sprite, true);
-        this.dogList = [this.dog0, this.dog1 ];
+        const createDogs = (n=10, context=this, x=100, y=1500) => {
+            let res = [];
+            for (let i = 0; i<n; i++) {
+                res.push(new Dog(this, 100, 1500, 'dog', this.cat.sprite, true, i));
+            }
+            return res
+        }
+        this.dogList = createDogs(5);
         const camera = this.cameras.main;
         camera.startFollow(this.cat.sprite, false, 0.05, 0.5, -160, 250);
         // camera.setDeadzone(300, 500);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.matter.world.drawDebug = true;
 
-        setInterval(() => console.log('Привет'), 10000);
+        // setInterval(() => console.log('Привет'), 10000);
 
     }
 
