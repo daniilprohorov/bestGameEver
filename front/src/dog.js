@@ -37,7 +37,7 @@ export default class Dog {
 
     constructor(scene, x, y, tag, player, learning, n) {
 
-
+        this.endTime = null; // end time
         // Create the physics-based sprite that we will move around and animate
         this.sprite = scene.matter.add.sprite(0, 0, tag, 0);
         this.tag = 'dog' + n;
@@ -92,12 +92,6 @@ export default class Dog {
           .setExistingBody(compoundBody)
           .setFixedRotation() // Sets inertia to infinity so the player can't rotate
           .setPosition(x, y);
-
-        let text = scene.matter.add.text(0, 0, 'Testing');
-        scene.matter.add
-        this.sprite.add.text()
-        text.font = "Arial";
-        text.setOrigin(0.5, 0.5);
 
         const newCategory  = scene.matter.world.nextCategory();
         this.sprite.setCollisionCategory(newCategory)
@@ -195,6 +189,8 @@ export default class Dog {
         // инициализируем датасет
         this.dataSet = [];
 
+        this.canCollide = true;
+
     }
     predict(inputList) {
         const weights = this.model.getWeights();
@@ -240,14 +236,13 @@ export default class Dog {
   onDogCollide({ bodyA, bodyB, pair }) {
     if (bodyB.isSensor) return; // We only care about collisions with physical objects
     if (bodyB.isDog && bodyA.isDog) return; // Not collide with other dogs
-      if (this.player.body.parts.some( x => {return x === bodyB;})) {
+    if (this.player.body.parts.some( x => {return x === bodyB;}) ) {
+        // this.canCollide = false
+        this.scene.matterCollision.removeAllCollideListeners()
         console.log("GAME OVER");
         console.log(this.tag);
-        // if(this.learning) {
-        //     this.train();
-        // }
+        this.endTime = new Date().getTime();
         this.catCollide = true;
-
     }
   }
 
@@ -360,6 +355,7 @@ export default class Dog {
 
     destroy() {
         this.destroyed = true;
+        this.sprite.destroy();
     }
 }
 
